@@ -1,0 +1,1 @@
+This folder will contain the contact tracing microservice dealing with Neo4j database.
