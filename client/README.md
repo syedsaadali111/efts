@@ -1,1 +1,1 @@
-This folder will contain the front-end react application.
+## This folder will contain the front-end react application.
