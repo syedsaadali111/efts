@@ -27,6 +27,7 @@ Daniyal Admany
 4. Once you are done developing, add and commit your changes locally. You can also use VSCode's built-in Git support to do this.
 
 `git add .`
+
 `git commit -m "A descriptive commit message"`
 
 5. Now, push your feature branch to remote. After this, you will be able to see your branch in the repository online.
