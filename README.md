@@ -32,3 +32,5 @@ Daniyal Admany
 5. Now, push your feature branch to remote. After this, you will be able to see your branch in the repository online.
 
 `git push origin branch-name`
+
+6. Open the repository in the browser and open a pull request for your branch.
