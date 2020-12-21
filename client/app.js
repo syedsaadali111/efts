@@ -22,7 +22,7 @@ mongoose.connect(connectionURL, {
 
 app.get("/verify", (req, res) => res.render('home'));
 
-app.post('/verify',(req,res)=>{                                                     //This is the post request from the Submit Button in .ejs file. 
+app.post('/verify',(req,res)=>{  
     Citizens.find({ TC : req.body.TC,                                         //This is the query inorder to verify the user.
                     FName : req.body.FName,                                   // This query returns a JSON Object which will be displayed on 
                     SName: req.body.SName,                                    // the screen if the user credentials are correct.
