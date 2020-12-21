@@ -22,7 +22,7 @@ Daniyal Admany
 
 3. Create a new branch for the feature you are going to work on.
 
-`git checkout -b feature-name`
+`git checkout -b branch-name`
 
 4. Once you are done developing, add and commit your changes locally. You can also use VSCode's built-in Git support to do this.
 
