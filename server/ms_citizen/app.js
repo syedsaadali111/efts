@@ -4,7 +4,7 @@ const Citizens = require('./citizendb'); //This is the Schema created for insert
 Cors = require("cors"); // required for providing connection in the middleware. 
 
 const app = express(); 
-const port = process.env.PORT || 5001; //listening to port 3000
+const port = process.env.PORT || 5002; //listening to port 3000
 
 app.use(express.json());  //JSON format 
 app.use(Cors()); 
