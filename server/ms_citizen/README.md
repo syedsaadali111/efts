@@ -1,4 +1,4 @@
-## This folder will contain the citizen microservice containing user verification code.
+## This folder contains the citizen microservice containing user verification code.
 The Port Number used by the Verification is : 5001
 
 The Route used is : /verify
