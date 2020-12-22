@@ -27,3 +27,5 @@ status code: 400
 2) Add the generated code in mongoDB
 3) Add the generated code in Neo4j (check the filiation microservice, it has a route that you can use
 
+minal
+
