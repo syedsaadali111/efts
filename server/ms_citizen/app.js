@@ -1,6 +1,6 @@
 var mongoose = require('mongoose'); //required for the DB connection with MongoDB
 var express = require('express'); // required for the API formation 
-const Citizens = require('../../../verification/citizendb'); //This is the Schema created for insert , retreive and deletion purpose. However, we are only using retrive
+const Citizens = require('./citizendb'); //This is the Schema created for insert , retreive and deletion purpose. However, we are only using retrive
 Cors = require("cors"); // required for providing connection in the middleware. 
 
 const app = express(); 
