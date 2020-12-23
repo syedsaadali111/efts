@@ -1,6 +1,6 @@
 var mongoose = require('mongoose'); //required for the DB connection with MongoDB
 var express = require('express'); // required for the API formation 
-const Citizens = require('./citizendb'); //This is the Schema created for insert , retreive and deletion purpose. However, we are only using retrive
+const Citizens = require('../../../verification/citizendb'); //This is the Schema created for insert , retreive and deletion purpose. However, we are only using retrive
 Cors = require("cors"); // required for providing connection in the middleware. 
 
 const app = express(); 
@@ -12,7 +12,7 @@ app.use(Cors()) ;
 app.set('view engine','ejs'); //pointing to the views for .ejs file rendering
 app.use(express.urlencoded()); 
 
-const connectionURL = "mongodb+srv://admin:admin@cluster0.plhxn.mongodb.net/EFTS?retryWrites=true&w=majority";
+const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
 mongoose.connect(connectionURL, {
   useCreateIndex: true,
   useNewUrlParser: true,
