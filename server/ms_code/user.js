@@ -9,6 +9,10 @@ var userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    qrcode_image : {
+        type: Buffer,
+        required:true
+    },
     expirationDate: {
         type: Date,
         expires: 0

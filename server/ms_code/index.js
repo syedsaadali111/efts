@@ -5,6 +5,7 @@ var hashSum = require('hash-sum');
 Cors = require("cors"); // required for providing connection in the middleware. 
 var userModel = require('./user');
 var mongoose = require('mongoose');
+var QRCode      =   require('qrcode');
 
 const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
 
@@ -33,7 +34,6 @@ app.post('/generate', (req, res) => {
     console.log(req.body);
     console.log("req body id " + req.body.id);
 
-
     if (typeof req.body.id !== "number") {
         res.status(400).send({ msg: "Failed. Incorrect format for: id" });
         return;
@@ -55,19 +55,40 @@ app.post('/generate', (req, res) => {
         });
 
         //send to mongodb
-
-        var userr = new userModel({
-            TC:req.body.id,
-            EFTScode:eftsCode,
-            });
-            userr.expirationDate = new Date(Date.now() + req.body.TTL);
-            userr.save((err,data)=>{
-                if(err){
-                    console.log(err);
-                }else{
-                    console.log("Saved to Database");
-                }
-            });
+        QRCode.toDataURL(eftsCode,{errorCorrectionLevel:'H'},function (err, url) {
+        if (err) {
+            res.status(500).send(err);
+        }
+          else {
+            var userr = new userModel({
+                TC:req.body.id,
+                EFTScode:eftsCode,
+                qrcode_image:url
+                });
+                userr.expirationDate = new Date(Date.now() + req.body.TTL);
+                userr.save((err,data)=>{
+                    if(err){
+                        console.log(err);
+                    }else{
+                        console.log("Saved to Database");
+                    }
+                });                                         
+          }
+      });
+    //   console.Console(qrcode);         
+    //     var userr = new userModel({
+    //         TC:req.body.id,
+    //         EFTScode:eftsCode,
+    //         qrcode_image:url
+    //         });
+    //         userr.expirationDate = new Date(Date.now() + req.body.TTL);
+    //         userr.save((err,data)=>{
+    //             if(err){
+    //                 console.log(err);
+    //             }else{
+    //                 console.log("Saved to Database");
+    //             }
+    //         });
     }
 
 });
