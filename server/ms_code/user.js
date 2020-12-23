@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var userSchema = new mongoose.Schema({
     TC: {
-        type: String,
+        type: Number,
         required: true,
     },
     EFTScode: {

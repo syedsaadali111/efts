@@ -6,7 +6,7 @@ Cors = require("cors"); // required for providing connection in the middleware.
 var userModel = require('./user');
 var mongoose = require('mongoose');
 
-const connectionURL = "mongodb+srv://admin:admin@cluster0.plhxn.mongodb.net/EFTS?retryWrites=true&w=majority";
+const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
 
 //connect to db
 mongoose.connect(connectionURL, { useNewUrlParser: true })
@@ -16,6 +16,8 @@ mongoose.connect(connectionURL, { useNewUrlParser: true })
 //connect exptress
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded()); 
+
 
 //testing with hardcoding
 // var hashcode = hashSum(99841231231); 
@@ -55,6 +57,7 @@ app.post('/generate', (req, res) => {
         //send to mongodb
 
         var userr = new userModel({
+            TC:req.body.id,
             EFTScode:eftsCode,
             });
             userr.expirationDate = new Date(Date.now() + req.body.TTL);
@@ -69,7 +72,7 @@ app.post('/generate', (req, res) => {
 
 });
 
-const PORT = 5001;
+const PORT = 5002;
 app.listen(PORT, () => {
     console.log(`Running on port number ${PORT}`);
 });
