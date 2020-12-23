@@ -9,9 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "hash-sum": "^2.0.0",
-    "mongodb": "^3.6.3",
+    "mongoose": "^5.11.8",
     "randomstring": "^1.1.5"
   }
 }
