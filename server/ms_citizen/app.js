@@ -12,7 +12,7 @@ app.use(Cors()) ;
 app.set('view engine','ejs'); //pointing to the views for .ejs file rendering
 app.use(express.urlencoded()); 
 
-const connectionURL = "mongodb+srv://admin:admin@cluster0.plhxn.mongodb.net/EFTS?retryWrites=true&w=majority";
+const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
 mongoose.connect(connectionURL, {
   useCreateIndex: true,
   useNewUrlParser: true,
