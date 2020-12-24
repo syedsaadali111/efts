@@ -48,12 +48,6 @@ app.post('/generate', (req, res) => {
         //var hashcode = hashSum(req.body.id)
         //res.status(200).send(eftsCode);
 
-        res.json({
-            msg: 'EFTS Code successfully Generated.',
-            efts: eftsCode,
-            id: req.body.id
-        });
-
         //send to mongodb
         QRCode.toDataURL(eftsCode,{errorCorrectionLevel:'H'},function (err, url) {
         if (err) {
@@ -70,7 +64,12 @@ app.post('/generate', (req, res) => {
                     if(err){
                         console.log(err);
                     }else{
-                        console.log("Saved to Database");
+                        res.status(200).json({
+                            msg: 'EFTS Code successfully Generated.',
+                            efts: eftsCode,
+                            id: req.body.id,
+                            qrcode:url
+                        });
                     }
                 });                                         
           }
