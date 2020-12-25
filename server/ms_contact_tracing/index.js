@@ -1,8 +1,10 @@
 const express = require('express');
 const neo4j = require('neo4j-driver');
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const neo_uri = 'neo4j://localhost:7687';
 const driver = neo4j.driver(neo_uri, neo4j.auth.basic('neo4j', '1234'));
