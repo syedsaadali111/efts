@@ -7,13 +7,15 @@ const twilioClient = require('twilio')(accountSid, authToken);
 
 const express = require('express');
 const randomstring = require('randomstring');
-var hashSum = require('hash-sum');
+const hashSum = require('hash-sum');
+
+const axios = require('axios');
 
 // required for providing connection in the middleware. 
 const cors = require("cors"); 
-var userModel = require('./user');
-var mongoose = require('mongoose');
-var QRCode = require('qrcode');
+const userModel = require('./user');
+const mongoose = require('mongoose');
+const QRCode = require('qrcode');
 
 const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
 
@@ -28,20 +30,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded());
 
-
-//testing with hardcoding
-// var hashcode = hashSum(99841231231); 
-//     console.log(hashcode); 
-//     var txt2 = hashcode.slice(0, 4) + "-" + hashcode.slice(3);
-//     console.log (txt2); 
-//     //var hashcode = hashSum(req.body.id)
-//     var eftsCode = "EFTS-" + txt2; 
-//     console.log(eftsCode); 
-
 app.post('/generate', (req, res) => {
-    //just to check
-    console.log(req.body);
-    console.log("req body id " + req.body.id);
 
     if (typeof req.body.id !== "number") {
         res.status(400).send({ msg: "Failed. Incorrect format for: id" });
@@ -72,50 +61,46 @@ app.post('/generate', (req, res) => {
                         console.log('THIS ERROR!!')
                         res.status(400).send(err);
                     } else {
-                        //sending an sms with the EFTS code to the user
-                        var smsMsg = "\nYour EFTS Code: \n" + eftsCode;
 
-                        twilioClient.messages.create({
-                            body: smsMsg,
-                            from: '+14793483249',
-                            to: '+905454683730',
-                        })
-                        .then((msg) => {
-                            res.status(200).json({
-                                msg: 'EFTS Code successfully generated and sent as an SMS.',
-                                efts: eftsCode,
-                                id: req.body.id,
-                                qrcode: url,
-                                smsMsg: msg
+                        axios.post('http://localhost:5000/code', {
+                            "id": req.body.id,
+                            "eftsCode": eftsCode
+                        }).then( () => {
+                            console.log('neo4j code added');
+
+                            //sending an sms with the EFTS code to the user
+                            var smsMsg = "\nYour EFTS Code: \n" + eftsCode;
+
+                            twilioClient.messages.create({
+                                body: smsMsg,
+                                from: '+14793483249',
+                                to: '+905454683730',
+                                // to: '+905076752437',
+                            })
+                            .then((msg) => {
+                                res.status(200).json({
+                                    msg: 'EFTS Code successfully generated and sent as an SMS.',
+                                    efts: eftsCode,
+                                    id: req.body.id,
+                                    qrcode: url,
+                                    smsMsg: msg
+                                });
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                                res.status(200).json({
+                                    msg: 'EFTS Code successfully generated and sent as an SMS.',
+                                    efts: eftsCode,
+                                    id: req.body.id,
+                                    qrcode: url,
+                                    smsMsg: null
+                                });
                             });
-                        })
-                        .catch((err) => {
-                            res.status(200).json({
-                                msg: 'EFTS Code successfully generated and sent as an SMS.',
-                                efts: eftsCode,
-                                id: req.body.id,
-                                qrcode: url,
-                                smsMsg: null
-                            });
-                        });
+                        })                        
                     }
                 });
             }
         });
-        //   console.Console(qrcode);         
-        //     var userr = new userModel({
-        //         TC:req.body.id,
-        //         EFTScode:eftsCode,
-        //         qrcode_image:url
-        //         });
-        //         userr.expirationDate = new Date(Date.now() + req.body.ttl);
-        //         userr.save((err,data)=>{
-        //             if(err){
-        //                 console.log(err);
-        //             }else{
-        //                 console.log("Saved to Database");
-        //             }
-        //         });
     }
 
 });
