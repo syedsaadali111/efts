@@ -5,21 +5,29 @@
 #### Request
 
 {
+
   id: number --> this is the TC Kimlik number
+
+  ttl: number --> this is the expiration time of the EFTS code 
+
 }
 
 #### Response on success
 status code: 200
 
 {
+
   eftsCode: string --> this is the generated code
+
 }
 
 #### Response on failure
 status code: 400
 
 {
+
   msg: string --> any appropriate message
+
 }
 
 #### Workflow
