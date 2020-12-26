@@ -1,20 +1,15 @@
-body {
-    background-color: #ff4129;
-    color: white;
-}
-
-h2 {
+.main h2 {
     text-align: center;
     margin-bottom: 40px;
 }
 
-label {
+.main label {
     margin-top: 10px;
     margin-left: 10px;
     font-weight: bold;
 }
 
-input {
+.main input {
     margin: 10px 0;
     border-radius: 22px;
     border: none;
@@ -22,9 +17,15 @@ input {
     color: #793027;
     font-weight: bold;
     font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s ease;
 }
 
-button {
+.main input:focus{
+    outline: none;
+    transform: scale(1.05);
+}
+
+.container button {
     width: 250px;
     margin: 20px auto;
     border-radius: 30px;
@@ -35,6 +36,14 @@ button {
     font-size: 18px;
     border: none;
     font-family: 'Montserrat', sans-serif;
+}
+
+.container button:hover {
+    cursor: pointer;
+}
+
+.container button:focus{
+    outline: none;
 }
 
 .container {
@@ -57,7 +66,7 @@ button {
 }
 
 .addCodesForm {
-    width: 30%;
+    width: 50%;
     margin: auto;
     display: flex;
     flex-direction: column;    
@@ -67,7 +76,7 @@ button {
     background-color: #e9e9ea;
 }
 
-.addMoreBtn {
+.container .addMoreBtn {
     width: 125px;
     background-color: white;
     color: black;
@@ -78,4 +87,8 @@ button {
 .codeEntry {
     display: flex;
     width: 100%;
+}
+
+.msg {
+    margin:auto;
 }
