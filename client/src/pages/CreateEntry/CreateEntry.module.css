@@ -1,0 +1,81 @@
+body {
+    background-color: #ff4129;
+    color: white;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+label {
+    margin-top: 10px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+input {
+    margin: 10px 0;
+    border-radius: 22px;
+    border: none;
+    padding: 15px;
+    color: #793027;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+}
+
+button {
+    width: 250px;
+    margin: 20px auto;
+    border-radius: 30px;
+    padding: 20px;
+    background-color: #ba1b08;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.header {
+    background-color: #7b3229;
+    text-align: center;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: 20px auto;
+    padding-bottom: 20px;
+}
+
+.addCodesForm {
+    width: 30%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;    
+}
+
+.addCodesForm input {
+    background-color: #e9e9ea;
+}
+
+.addMoreBtn {
+    width: 125px;
+    background-color: white;
+    color: black;
+    font-size: 15px;
+    padding: 10px;
+}
+
+.codeEntry {
+    display: flex;
+    width: 100%;
+}

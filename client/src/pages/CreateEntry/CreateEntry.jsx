@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styles from './CreateEntry.module.css';
 import axios from 'axios';
 
 const CreateEntry = () => {
-    
+
     const [codes, setCodes] = useState(["EFTS-"]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -25,7 +25,7 @@ const CreateEntry = () => {
         const rawChars = e.target.value.replace(/-/g, '');
         const len = rawChars.length;
         let formattedValue = e.target.value;
-        if (len !== 0 && len % 4 === 0 && len < 16 && codes[idx].length < e.target.value.length){
+        if (len !== 0 && len % 4 === 0 && len < 16 && codes[idx].length < e.target.value.length) {
             formattedValue += '-';
         }
         if (codes[idx].length > e.target.value.length && codes[idx].charAt(codes[idx].length - 1) === '-') {
@@ -47,13 +47,13 @@ const CreateEntry = () => {
 
         if (filteredCodes.length !== 0) {
             axios.post('http://localhost:5000/filiation', {
-                from:  "EFTS-AAAA-AAAA-AAAA",
+                from: "EFTS-AAAA-AAAA-AAAA",
                 to: filteredCodes
-            }).then( (res) => {
+            }).then((res) => {
                 console.log(res.data);
-            }).catch( (err) => {
+            }).catch((err) => {
                 console.log(err.response.data.msg);
-            }).then( () => {
+            }).then(() => {
                 setIsLoading(false);
             });
         } else {
@@ -62,18 +62,29 @@ const CreateEntry = () => {
     }
 
     return (
-        <div className={styles.test}>
-            <h1>Create Contact Tracing Entry Page</h1>
-            {codes.map( (code, idx) => {
-                return (
-                    <input key={idx} placeholder="EFTS-XXXX-XXXX-XXXX" value={code} onChange={ e => handleChange(e, idx)}/>
-                )                
-            })}
-            <button onClick={handleAdd}>+ Add More</button>
-            <button onClick={handleSubmit} disable={isLoading.toString()}>Submit</button>
-            {isLoading ? <p>Loading...</p> : null}
+        <div className={styles.container}>
+            <div className={styles.header}>
+
+                <h1>Have a meeting?</h1>
+            </div>
+            <div className={styles.main}>
+                <h2>Enter EFTS codes of the participants</h2>
+                <div className={styles.addCodesDiv}>
+                    <div className={styles.addCodesForm}>
+                        {codes.map((code, idx) => {
+                            return (
+                                <input key={idx} placeholder="EFTS-XXXX-XXXX-XXXX" value={code} onChange={e => handleChange(e, idx)} />
+                            )
+                        })}
+                        <button className={styles.addMoreBtn} onClick={handleAdd}>+ Add More</button>
+                    </div>
+                    
+                </div>
+                <button onClick={handleSubmit} disable={isLoading.toString()}>SUBMIT</button>
+                {isLoading ? <p>Loading...</p> : null}
+            </div>
         </div>
     );
 }
- 
+
 export default CreateEntry;
