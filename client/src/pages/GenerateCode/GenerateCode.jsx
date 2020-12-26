@@ -1,76 +1,88 @@
 import React, { useState } from 'react';
+import styles from './GenerateCode.module.css'
 import axios from 'axios';
 
 const GenerateCode = () => {
 
     const [state, setState] = useState({
-        "TC": 0,
+        "TC": '',
         "FName": '',
         "SName": '',
         "DOB": ''
     });
     const [error, setError] = useState("");
     const [qr, setQr] = useState(null);
+    const [eftsCode, setEftsCode] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
-        setError('');
         let value = e.target.value;
 
-        if(e.target.name === "TC"){
-            value = parseInt(e.target.value);
-            console.log(e.target.value);
-        }
-
-        if(e.target.name === "DOB") {
-            value = value.split('-').reverse().join('/');
-        }
-
-        setState( (prevState) => {
+        setState((prevState) => {
             return {
                 ...prevState,
                 [e.target.name]: value
             }
-        }); 
+        });
     }
 
     const submitData = () => {
+        setError('');
         setLoading(true);
-        axios.post('http://localhost:5001/verify', state).then( (res) => {
+        setQr(null);
+        setEftsCode('');
+        const formData = {...state};
+        formData.TC = parseInt(state.TC);
+        formData.DOB = state.DOB.split('-').reverse().join('/');
+        axios.post('http://localhost:5001/verify', formData).then((res) => {
             const id = res.data.TC;
             console.log(id);
             axios.post('http://localhost:5002/generate', {
                 id: id,
                 ttl: 1000 * 60
-            }).then( (res) => {
-                console.log(res.data);
+            }).then((res) => {
                 setQr(res.data.qrcode);
+                setEftsCode(res.data.efts);
                 setLoading(false);
-            }).catch( (e) => {
+                setState({
+                    "TC": '',
+                    "FName": '',
+                    "SName": '',
+                    "DOB": ''
+                });
+            }).catch((e) => {
                 setError("There was an error saving code to database. Try again.");
             });
 
-        }).catch( (e) => {
+        }).catch((e) => {
             setError("No user found!");
             setLoading(false);
         })
     }
 
-    return(
-        <div style={{"display": "flex", "flexDirection": "column", "width": "50%", "margin": "auto"}}>
-            <label onChange={e => handleChange(e)} htmlFor="TC">TC Kimlik Number</label>
-            <input type="number" onChange={e => handleChange(e)} id="TC" name="TC" placeholder="Your national ID"/>
-            <label onChange={e => handleChange(e)} htmlFor="FName">First Name</label>
-            <input onChange={e => handleChange(e)} id="FName" name="FName" placeholder="First Name"/>
-            <label onChange={e => handleChange(e)} htmlFor="SName">Last Name</label>
-            <input onChange={e => handleChange(e)} id="SName" name="SName" placeholder="Last Name"/>
-            <label onChange={e => handleChange(e)} htmlFor="DOB">Date of birth</label>
-            <input type="date" onChange={e => handleChange(e)} id="DOB" name="DOB" placeholder="Date of birth"/>
-            <button onClick={submitData} disabled={loading}>Generate Code</button>
-            {error !== "" ? (<p>{error}</p>) : ''}
-            {qr ? (<img style={{"width": "200px", "height": "200px"}} alt="QR Code" src={qr}/>) : null}
+    return (
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <h1>Generate your EFTS code</h1>
+            </div>
+            <div className={styles.main}>
+                <h2>Enter your credentials</h2>
+                <label onChange={e => handleChange(e)} htmlFor="TC">TC Kimlik Number</label>
+                <input value={state.TC} type="number" onChange={e => handleChange(e)} id="TC" name="TC" placeholder="Your national ID" />
+                <label onChange={e => handleChange(e)} htmlFor="FName">First Name</label>
+                <input value={state.FName} onChange={e => handleChange(e)} id="FName" name="FName" placeholder="First Name" />
+                <label onChange={e => handleChange(e)} htmlFor="SName">Last Name</label>
+                <input value={state.SName} onChange={e => handleChange(e)} id="SName" name="SName" placeholder="Last Name" />
+                <label onChange={e => handleChange(e)} htmlFor="DOB">Date of birth</label>
+                <input value={state.DOB} type="date" onChange={e => handleChange(e)} id="DOB" name="DOB" placeholder="Date of birth" />
+                <button onClick={submitData} disabled={loading}>GENERATE CODE</button>
+                {error !== "" ? (<p>{error}</p>) : ''}
+                {loading ? <p>Loading...</p> : null}
+                {eftsCode !== '' ? <h2>{eftsCode}</h2> : null}
+                {qr ? (<img style={{ "width": "200px", "height": "200px", "margin": "auto" }} alt="QR Code" src={qr} />) : null}
+            </div>
         </div>
     );
 }
- 
+
 export default GenerateCode;

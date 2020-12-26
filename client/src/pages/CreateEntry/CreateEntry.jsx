@@ -1,19 +1,48 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styles from './CreateEntry.module.css';
 import axios from 'axios';
 
 const CreateEntry = () => {
-    
+
     const [codes, setCodes] = useState(["EFTS-"]);
+    const [userCode, setUserCode] = useState("EFTS-");
     const [isLoading, setIsLoading] = useState(false);
+    const [msg, setMsg] = useState('');
+
+    const handleToChange = (e) => {
+        const lastChar = e.target.value.charCodeAt(e.target.value.length - 1);
+        if (userCode.length < e.target.value.length &&
+            !(lastChar > 47 && lastChar < 58) && // numeric (0-9)
+            !(lastChar > 64 && lastChar < 91) && // upper alpha (A-Z)
+            !(lastChar > 96 && lastChar < 123)) { // lower alpha (a-z)
+            return;
+        }
+
+        if (e.target.value.length > 19) {
+            return;
+        }
+
+        const rawChars = e.target.value.replace(/-/g, '');
+        const len = rawChars.length;
+        let formattedValue = e.target.value;
+        if (len !== 0 && len % 4 === 0 && len < 16 && userCode.length < e.target.value.length) {
+            formattedValue += '-';
+        }
+        if (userCode.length > e.target.value.length && userCode.charAt(userCode.length - 1) === '-') {
+            formattedValue = formattedValue.slice(0, -1);
+        }
+
+        setUserCode(formattedValue);
+
+    }
 
     const handleChange = (e, idx) => {
 
         const lastChar = e.target.value.charCodeAt(e.target.value.length - 1);
         if (codes[idx].length < e.target.value.length &&
             !(lastChar > 47 && lastChar < 58) && // numeric (0-9)
-            !(lastChar > 64 && lastChar < 71) && // upper alpha (A-F)
-            !(lastChar > 96 && lastChar < 103)) { // lower alpha (a-f)
+            !(lastChar > 64 && lastChar < 91) && // upper alpha (A-Z)
+            !(lastChar > 96 && lastChar < 123)) { // lower alpha (a-z)
             return;
         }
 
@@ -25,7 +54,7 @@ const CreateEntry = () => {
         const rawChars = e.target.value.replace(/-/g, '');
         const len = rawChars.length;
         let formattedValue = e.target.value;
-        if (len !== 0 && len % 4 === 0 && len < 16 && codes[idx].length < e.target.value.length){
+        if (len !== 0 && len % 4 === 0 && len < 16 && codes[idx].length < e.target.value.length) {
             formattedValue += '-';
         }
         if (codes[idx].length > e.target.value.length && codes[idx].charAt(codes[idx].length - 1) === '-') {
@@ -47,14 +76,21 @@ const CreateEntry = () => {
 
         if (filteredCodes.length !== 0) {
             axios.post('http://localhost:5000/filiation', {
-                from:  "EFTS-AAAA-AAAA-AAAA",
+                from: userCode,
                 to: filteredCodes
-            }).then( (res) => {
-                console.log(res.data);
-            }).catch( (err) => {
-                console.log(err.response.data.msg);
-            }).then( () => {
+            }).then((res) => {
+                setMsg('Participants added successfully');
+            }).catch((err) => {
+                if(err.response) {
+                    console.log(err.response.data.msg);
+                    setMsg(err.response.data.msg);
+                } else {
+                    setMsg('Unknown error occured. Check your internet connection');
+                }
+            }).then(() => {
                 setIsLoading(false);
+                setCodes(["EFTS-"]);
+                setUserCode("EFTS-");
             });
         } else {
             setIsLoading(false);
@@ -62,18 +98,30 @@ const CreateEntry = () => {
     }
 
     return (
-        <div className={styles.test}>
-            <h1>Create Contact Tracing Entry Page</h1>
-            {codes.map( (code, idx) => {
-                return (
-                    <input key={idx} placeholder="EFTS-XXXX-XXXX-XXXX" value={code} onChange={ e => handleChange(e, idx)}/>
-                )                
-            })}
-            <button onClick={handleAdd}>+ Add More</button>
-            <button onClick={handleSubmit} disable={isLoading.toString()}>Submit</button>
-            {isLoading ? <p>Loading...</p> : null}
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <h1>Meeting Someone?</h1>
+            </div>
+            <div className={styles.main}>
+                <div className={styles.addCodesDiv}>
+                    <div className={styles.addCodesForm}>
+                        <h2>Enter your EFTS code</h2>
+                        <input placeholder="EFTS-XXXX-XXXX-XXXX" value={userCode} onChange={e => handleToChange(e)}></input>
+                        <h2>Enter EFTS codes of other participants</h2>
+                        {codes.map((code, idx) => {
+                            return (
+                                <input key={idx} placeholder="EFTS-XXXX-XXXX-XXXX" value={code} onChange={e => handleChange(e, idx)} />
+                            )
+                        })}
+                        <button className={styles.addMoreBtn} onClick={handleAdd}>+ Add More</button>
+                    </div>
+                </div>
+                <button onClick={handleSubmit} disable={isLoading.toString()}>SUBMIT</button>
+                {isLoading ? <p className={styles.msg}>Loading...</p> : null}
+                {msg !== '' ? <p className={styles.msg}>{msg}</p> : null}
+            </div>
         </div>
     );
 }
- 
+
 export default CreateEntry;
