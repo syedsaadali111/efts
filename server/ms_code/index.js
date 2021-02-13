@@ -58,7 +58,6 @@ app.post('/generate', (req, res) => {
                 userr.expirationDate = new Date(Date.now() + req.body.ttl);
                 userr.save((err, data) => {
                     if (err) {
-                        console.log('THIS ERROR!!')
                         res.status(400).send(err);
                     } else {
 
