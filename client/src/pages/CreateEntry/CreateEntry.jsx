@@ -82,7 +82,6 @@ const CreateEntry = () => {
                 setMsg('Participants added successfully');
             }).catch((err) => {
                 if(err.response) {
-                    console.log(err.response.data.msg);
                     setMsg(err.response.data.msg);
                 } else {
                     setMsg('Unknown error occured. Check your internet connection');

@@ -36,7 +36,6 @@ const GenerateCode = () => {
         formData.DOB = state.DOB.split('-').reverse().join('/');
         axios.post('http://localhost:5001/verify', formData).then((res) => {
             const id = res.data.TC;
-            console.log(id);
             axios.post('http://localhost:5002/generate', {
                 id: id,
                 ttl: 1000 * 60

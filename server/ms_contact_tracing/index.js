@@ -6,8 +6,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const neo_uri = 'neo4j://localhost:7687';
-const driver = neo4j.driver(neo_uri, neo4j.auth.basic('neo4j', '1234'));
+const neo_uri = 'neo4j://3.139.61.15:7687';
+const driver = neo4j.driver(neo_uri, neo4j.auth.basic('neo4j', 'efts'));
 
 /* FOR FUTURE REFERENCE, LEAVING THIS CODE HERE */
 // app.post('/citizen', (req, res) => {
