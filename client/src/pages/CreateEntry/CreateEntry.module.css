@@ -1,6 +1,6 @@
 .main h2 {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 .main label {
@@ -62,7 +62,6 @@
     flex-direction: column;
     width: 50%;
     margin: 20px auto;
-    padding-bottom: 20px;
 }
 
 .addCodesForm {
@@ -90,5 +89,31 @@
 }
 
 .msg {
-    margin:auto;
+    margin: auto;
+}
+
+/* For Tablets */
+@media only screen and (max-width: 1024px) {
+    .main {
+        width: 90%;
+    }
+}
+
+/* For Mobile Phones */
+@media only screen and (max-width: 600px) {
+    .main {
+        width: 90%;
+    }
+
+    .main h2 {
+        font-size: 20px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .addCodesForm {
+        width: 70%;
+    }
 }
