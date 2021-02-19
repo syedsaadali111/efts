@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styles from './GenerateCode.module.css'
 import axios from 'axios';
+import { UserContext } from '../../helpers/userContext';
 
 const GenerateCode = () => {
+
+    const user = useContext(UserContext);
 
     const [state, setState] = useState({
         "TC": '',
@@ -63,6 +66,7 @@ const GenerateCode = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1>Generate your EFTS code</h1>
+                <h1>{user.name}</h1>
             </div>
             <div className={styles.main}>
                 <h2>Enter your credentials</h2>

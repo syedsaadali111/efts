@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styles from './CreateEntry.module.css';
 import axios from 'axios';
+import { UserContext } from '../../helpers/userContext';
 
 const CreateEntry = () => {
+
+    const user = useContext(UserContext);
 
     const [codes, setCodes] = useState(["EFTS-"]);
     const [userCode, setUserCode] = useState("EFTS-");
@@ -100,6 +103,7 @@ const CreateEntry = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1>Meeting Someone?</h1>
+                <h1>{user.name}</h1>
             </div>
             <div className={styles.main}>
                 <div className={styles.addCodesDiv}>
