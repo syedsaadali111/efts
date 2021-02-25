@@ -9,13 +9,21 @@ POST REQUEST(S)
 
 {
     "TC": 99464426730,                                           //Number
+    
     "fname" : "ABC",                                            //String
+    
     "sname" : "XYZ",                                            //String
+    
     "dob" : "15/06/1999",                                       //String
+    
     "gender" : "Male",                                          //String
+    
     "email" : "abc.xyz@qwert.com",                              //String
+    
     "occupation" : "Student",                                   //String
+    
     "phone" : 1234567,                                          //Number 
+    
     "password" : "yourpasswordwillbehashedandstored"           //String
 
 }
