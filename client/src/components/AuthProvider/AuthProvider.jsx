@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { getJWT } from '../../helpers/jwt';
 import { withRouter } from 'react-router-dom';
 import { UserContext } from '../../helpers/userContext';
+import axios from 'axios';
 
 class AuthProvider extends Component {
     constructor(props) {
@@ -15,23 +16,26 @@ class AuthProvider extends Component {
     componentDidMount() {
         //get jwt
         const jwt = getJWT();
-        console.log(jwt);
-        if (!jwt) {
+        console.log("jwt", jwt );
+        if (jwt == null) {
             this.props.history.push('/login');
+        } else {
+            axios.get('http://localhost:5003/getUser', {
+                headers: {
+                    Authorization: `Bearer ${jwt}`
+                }
+            }).then( (res) => {
+                console.log(res.data);
+                this.setState({
+                    ...this.state,
+                    user: res.data
+                });
+            }).catch( () => {
+                localStorage.removeItem('jwt');
+                this.props.history.push('/login');
+            });
+
         }
-
-        //TODO: send request to /getUser, set state to the returned user info.
-        // If error in request, remove jwt and redirect to /login,
-        
-        this.setState({
-            ...this.state,
-            user: {
-                id: '99542836758',
-                name: 'Syed Saad Ali',
-                eftsCode: 'EFTS-1111-1111-1111'
-            }
-        });
-
     }
     
     render() { 

@@ -8,36 +8,8 @@ const CreateEntry = () => {
     const user = useContext(UserContext);
 
     const [codes, setCodes] = useState(["EFTS-"]);
-    const [userCode, setUserCode] = useState("EFTS-");
     const [isLoading, setIsLoading] = useState(false);
     const [msg, setMsg] = useState('');
-
-    const handleToChange = (e) => {
-        const lastChar = e.target.value.charCodeAt(e.target.value.length - 1);
-        if (userCode.length < e.target.value.length &&
-            !(lastChar > 47 && lastChar < 58) && // numeric (0-9)
-            !(lastChar > 64 && lastChar < 91) && // upper alpha (A-Z)
-            !(lastChar > 96 && lastChar < 123)) { // lower alpha (a-z)
-            return;
-        }
-
-        if (e.target.value.length > 19) {
-            return;
-        }
-
-        const rawChars = e.target.value.replace(/-/g, '');
-        const len = rawChars.length;
-        let formattedValue = e.target.value;
-        if (len !== 0 && len % 4 === 0 && len < 16 && userCode.length < e.target.value.length) {
-            formattedValue += '-';
-        }
-        if (userCode.length > e.target.value.length && userCode.charAt(userCode.length - 1) === '-') {
-            formattedValue = formattedValue.slice(0, -1);
-        }
-
-        setUserCode(formattedValue);
-
-    }
 
     const handleChange = (e, idx) => {
 
@@ -79,7 +51,7 @@ const CreateEntry = () => {
 
         if (filteredCodes.length !== 0) {
             axios.post('http://localhost:5000/filiation', {
-                from: userCode,
+                from: user.EFTScode,
                 to: filteredCodes
             }).then((res) => {
                 setMsg('Participants added successfully');
@@ -92,7 +64,6 @@ const CreateEntry = () => {
             }).then(() => {
                 setIsLoading(false);
                 setCodes(["EFTS-"]);
-                setUserCode("EFTS-");
             });
         } else {
             setIsLoading(false);
@@ -103,13 +74,10 @@ const CreateEntry = () => {
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1>Meeting Someone?</h1>
-                <h1>{user.name}</h1>
             </div>
             <div className={styles.main}>
                 <div className={styles.addCodesDiv}>
                     <div className={styles.addCodesForm}>
-                        <h2>Enter your EFTS code</h2>
-                        <input placeholder="EFTS-XXXX-XXXX-XXXX" value={userCode} onChange={e => handleToChange(e)}></input>
                         <h2>Enter EFTS codes of other participants</h2>
                         {codes.map((code, idx) => {
                             return (

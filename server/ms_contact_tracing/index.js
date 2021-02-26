@@ -6,26 +6,26 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const neo_uri = 'neo4j://3.139.61.15:7687';
+const neo_uri = 'neo4j://18.216.10.216:7687';
 const driver = neo4j.driver(neo_uri, neo4j.auth.basic('neo4j', 'efts'));
 
 /* FOR FUTURE REFERENCE, LEAVING THIS CODE HERE */
-// app.post('/citizen', (req, res) => {
-//     const session = driver.session();
+app.post('/citizen', (req, res) => {
+    const session = driver.session();
 
-//     const writeTxPromise = session.writeTransaction(async tx => {
-//         const result = tx.run('MERGE (p:Person {eftsCode: $eftsCode}) RETURN p', {eftsCode: req.body.eftsCode});
-//         return result;
-//     });
+    const writeTxPromise = session.writeTransaction(async tx => {
+        const result = tx.run('MERGE (p:Citizen {id: toInteger($id), isInfected: false, eftsCode: \'\'}) RETURN p', {id: req.body.id});
+        return result;
+    });
 
-//     writeTxPromise.then((result) => {
-//         res.json({
-//             msg: 'Node Created.',
-//             createdNode: result.records[0]
-//         });
-//         session.close();
-//     });
-// });
+    writeTxPromise.then((result) => {
+        res.json({
+            msg: 'Node Created.',
+            createdNode: result.records[0]
+        });
+        session.close();
+    });
+});
 
 app.post('/code', (req, res) => {
 

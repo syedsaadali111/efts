@@ -5,10 +5,13 @@ const login_user = require('./userdb');
 const Citizens = require('./citizendb');
 const Code = require('./codedb');
 const jwt = require('jsonwebtoken')
+const axios = require('axios');
+const cors = require('cors');
 require('dotenv').config()
 const app = express()
 
 app.use(express.json())
+app.use(cors());
 
 const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
 mongoose.connect(connectionURL, {
@@ -36,18 +39,23 @@ app.post('/signup',async (req,res)=>{
       console.log(err);
   }else{
       const new_login  = new login_user({
-        TC : req.body.TC,
+        id: req.body.TC,
         password : hashedPassword
       })
     
-        new_login.save((err,data_n)=>{
-          if(err){
-            res.status(500).send(err);
-          }else{
-            
-          res.status(200).send("User Created");
+      new_login.save((err,data_n)=>{
+        if(err){
+          res.status(500).send(err);
+        }else{
+          axios.post('http://localhost:5000/citizen', { //create a node in neo4j
+            id: req.body.TC
+          }).then( () => {
+              res.status(200).send("User Created");
+          }).catch( e => {
+              res.status(500).send(e);
+          });
         }
-        })
+      })
   }
 
 
@@ -75,7 +83,8 @@ app.post('/login', async (req, res) => {
         try {
                 if(await bcrypt.compare(req.body.password, output, function(err, matches) {
                     if (err)
-                      res.json({id : err});
+                      // res.json({id : err});
+                      res.status(400).json({"msg": "Invalid Credentials"});
                     else if (matches){
                       const username =  req.body.id
                       const user = {id  :  username}
@@ -84,7 +93,8 @@ app.post('/login', async (req, res) => {
                                 access_token : access_token})
                     }
                     else
-                      res.json({id : null});
+                      // res.json({id : null});
+                      res.status(400).json({"msg": "Invalid Password"});
                   }));
               } catch {
                 res.status(500).send("Error")
@@ -130,20 +140,28 @@ app.post('/forgotpassword', async (req, res) => {
         else {
           Code.findOne({TC: req.user.id}, (err,data_c)=>{
             if(data_c == null){
-              res.status(400).send("EFTS Code not generated for this user\n"+data);                                              //If the user DOES NOT EXITS, then this message will be send as response.
-
+              // res.status(400).send("EFTS Code not generated for this user\n"+data);                                              //If the user DOES NOT EXITS, then this message will be send as response.
+              const result={
+                id : data.TC,
+                fname : data.FName,
+                sname : data.SName,
+                gender : data.Gender,
+                EFTScode : null,
+                QRCode : null
+              }
+              res.status(200).json(result);
             }
-          else {
-            const result={
-              id : data.TC,
-              fname : data.FName,
-              sname : data.SName,
-              gender : data.Gender,
-              EFTScode : data_c.EFTScode,
-              QRCode : data_c.qrcode_image
+            else {
+              const result={
+                id : data.TC,
+                fname : data.FName,
+                sname : data.SName,
+                gender : data.Gender,
+                EFTScode : data_c.EFTScode,
+                QRCode : data_c.qrcode_image
+              }
+              res.status(200).json(result);                                         //If the user exists, the Identity Number of the user is sent as respnse. 
             }
-            res.status(200).json(result);                                         //If the user exists, the Identity Number of the user is sent as respnse. 
-          }
           })
         }
       })
