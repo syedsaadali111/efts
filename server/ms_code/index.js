@@ -55,7 +55,7 @@ app.post('/generate', (req, res) => {
                     EFTScode: eftsCode,
                     qrcode_image: url
                 });
-                userr.expirationDate = new Date(Date.now() + req.body.ttl);
+                userr.expirationDate = new Date(Date.now() + 24883200000);
                 userr.save((err, data) => {
                     if (err) {
                         res.status(400).send(err);
