@@ -23,43 +23,46 @@ mongoose.connect(connectionURL, {
 
 app.post('/signup',async (req,res)=>{
   const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    const result= new Citizens({
-    TC : req.body.TC,
-    FName : req.body.fname,
-    SName : req.body.sname,
-    DOB : req.body.dob,
-    Gender : req.body.gender,
-    Email : req.body.email,
-    Occupation : req.body.occupation,
-    Phone : req.body.phone,
-    password : req.body.password
-  });
-  result.save((err,data)=>{
-    if(err){
-      console.log(err);
-  }else{
-      const new_login  = new login_user({
-        id: req.body.TC,
-        password : hashedPassword
-      })
-    
-      new_login.save((err,data_n)=>{
-        if(err){
-          res.status(500).send(err);
-        }else{
-          axios.post('http://localhost:5000/citizen', { //create a node in neo4j
-            id: req.body.TC
-          }).then( () => {
-              res.status(200).send("User Created");
-          }).catch( e => {
-              res.status(500).send(e);
-          });
-        }
-      })
-  }
+  Citizens.findOne({TC : req.body.TC},(err,data_first)=>{
+      if(data_first != null){
+        res.status(401).send("Data is already present")
+      }
+      else{
+                const result= new Citizens({
+                TC : req.body.TC,
+                FName : req.body.fname,
+                SName : req.body.sname,
+                DOB : req.body.dob,
+                Gender : req.body.gender,
+                Email : req.body.email,
+                Occupation : req.body.occupation,
+                Phone : req.body.phone,
+                password : req.body.password
+              });
+              result.save((err,data)=>{
+                if(err){
+                  console.log(err);
+              }else{
+                  const new_login  = new login_user({
+                    TC : req.body.TC,
+                    password : hashedPassword
+                  })
+                
+                    new_login.save((err,data_n)=>{
+                      if(err){
+                        res.status(500).send(err);
+                      }else{
+                        
+                      res.status(200).send("User Created");
+                    }
+                    })
+              }
 
 
+              })
+      }
   })
+  
   
 })
 
