@@ -1,4 +1,4 @@
-## This folder contains the citizen microservice containing user verification code.
+## This folder contains the citizen microservice containing user Authentication.
 The Port Number used by the Authentication Microservice is : 5003
 
 The Routes used are : 
