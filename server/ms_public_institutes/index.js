@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const mongoose = require('mongoose');
 const login_institute = require('./public_institute_logindb');
 const PublicInstitute = require('./public_institutedb');
+const p_institute_rule = require ('./public_institute_rulesdb'); 
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const app = express()
@@ -150,14 +151,125 @@ function authenticateToken(req, res, next) {
   })
 }
 
-app.post('/createRule',(req,res)=>{
+app.post('/createRule',authenticateToken,(req,res)=>{
+    p_institute_rule.findOne({id:req.body.id},(err,data)=>{
+        if(err){
+            res.send(err)
+        }
+        else if(data){
+            res.send("Rule is already exists")
+        }
+        else{
 
-    
+            const rule = new p_institute_rule({
+                id: req.body.id,
+                p_id : req.body.p_id,
+                name: req.body.name,
+                description: req.body.description,
+                context : req.body.context,
+                startDate: req.body.sdate,
+                endDate: req.body.edate,
+                days: req.body.days,
+                priority: req.body.priority,
+                timeFrom : req.body.timeFrom,
+                timeTo: req.body.timeTo,
+                minAge :req.body.minAge,
+                maxAge : req.body.maxAge,
+                travelFrom : req.body.travelFrom,
+                travelTo: req.body.travelTo,
+                ruleActive : req.body.ruleActive
+            })
+            req.body.occupationAllow.forEach(element => {
+                rule.occupationAllow.push(element);
+        
+            });
+            req.body.occupationDeny.forEach(element => {
+                rule.occupationDeny.push(element);
+        
+            });
+            rule.save((err,data)=>{
+                if(err){
+                    res.send(err);
+                }else{
+                    res.status(200).send("Rule Created");
+        
+                }
+            })
+        }
+
+    })
+        
+
 })
 
 
+app.get('/getRule',authenticateToken,(req,res)=>{
+    p_institute_rule.findOne({id:req.body.id},(err,data)=>{
+        if(err){
+            res.send(err);
+        }else if(data == null) {
+            res.status(400).send("Rule not found")
+        }
+        else{
+            res.status(200).send(data);
+        }
 
-  const PORT = 5003;
+    })
+})
+
+app.post('/modifyRule',authenticateToken,(req,res)=>{
+    p_institute_rule.findOneAndUpdate({id:req.body.id},{
+            name: req.body.name,
+            description: req.body.description,
+            context : req.body.context,
+            startDate: req.body.sdate,
+            endDate: req.body.edate,
+            days: req.body.days,
+            priority: req.body.priority,
+            timeFrom : req.body.timeFrom,
+            timeTo: req.body.timeTo,
+            minAge :req.body.minAge,
+            maxAge : req.body.maxAge,
+            travelFrom : req.body.travelFrom,
+            travelTo: req.body.travelTo,
+            ruleActive : req.body.ruleActive,
+            "$set" : {  occupationAllow:req.body.occupationAllow,
+                        occupationDeny: req.body.occupationDeny}
+    },(err,data)=>{
+        if(err){
+            res.send(err)
+        }
+        else if (data == null){
+            res.status(400).send("Rule Not Found");                                              //If the user DOES NOT EXITS, then this message will be send as response.
+        }
+        else {
+
+            res.status(200).send("Rule is Modified");
+        }
+        
+
+    })
+})
+
+app.get('/deleteRule',authenticateToken,(req,res)=>{
+    p_institute_rule.findOneAndDelete({id:req.body.id},(err,data)=>{
+        if(err){
+            res.send(err)
+        }
+        else if (data == null){
+            res.send("ID is wrong . Rule not Deleted")
+        }
+        else{
+            res.send("Rule is deleted")
+        }
+
+    })
+
+
+})
+
+
+  const PORT = 5004;
   app.listen(PORT, () => {
       console.log(`Running on port number ${PORT}`);
   });
