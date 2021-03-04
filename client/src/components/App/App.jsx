@@ -1,22 +1,34 @@
 import './App.css';
 import CreateEntry from '../../pages/CreateEntry/CreateEntry';
-import {Switch, Route} from 'react-router-dom';
+import {Switch, Route, Redirect} from 'react-router-dom';
 import GenerateCode from '../../pages/GenerateCode/GenerateCode';
+import Login from '../../pages/Login/Login';
+import AuthProvider from '../../components/AuthProvider/AuthProvider';
+import Home from '../../pages/Home/Home';
+import SignUp from '../../pages/SignUp/SignUp';
 
 function App() {
   return (
     <>
       <Switch>
-        <Route path="/filiation">
-          <CreateEntry />
+        <Route exact path="/login">
+          <Login />
         </Route>
-        <Route path="/generate">
-          <GenerateCode />
+        <Route path="/signup">
+          <SignUp />
         </Route>
-        <Route path="/">
-          <p>/filiation for creating contact tracing entry</p>
-          <p>/generate for code generation</p>
-        </Route>
+        <AuthProvider>
+          <Route exact path="/">
+            <Home/>
+          </Route>
+          <Route path="/filiation">
+            <CreateEntry />
+          </Route>
+          <Route path="/generate">
+            <GenerateCode />
+          </Route>
+        </AuthProvider>
+        <Redirect to="/" />
       </Switch>
     </>
   );

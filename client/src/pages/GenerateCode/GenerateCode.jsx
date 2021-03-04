@@ -1,62 +1,32 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styles from './GenerateCode.module.css'
 import axios from 'axios';
+import { UserContext } from '../../helpers/userContext';
 
 const GenerateCode = () => {
 
-    const [state, setState] = useState({
-        "TC": '',
-        "FName": '',
-        "SName": '',
-        "DOB": ''
-    });
+    const user = useContext(UserContext);
+
     const [error, setError] = useState("");
-    const [qr, setQr] = useState(null);
-    const [eftsCode, setEftsCode] = useState('');
+    const [qr, setQr] = useState(user.QRCode);
+    const [eftsCode, setEftsCode] = useState(user.EFTScode);
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        let value = e.target.value;
-
-        setState((prevState) => {
-            return {
-                ...prevState,
-                [e.target.name]: value
-            }
-        });
-    }
-
-    const submitData = () => {
+    const handleClick = () => {
         setError('');
         setLoading(true);
         setQr(null);
         setEftsCode('');
-        const formData = {...state};
-        formData.TC = parseInt(state.TC);
-        formData.DOB = state.DOB.split('-').reverse().join('/');
-        axios.post('http://localhost:5001/verify', formData).then((res) => {
-            const id = res.data.TC;
-            axios.post('http://localhost:5002/generate', {
-                id: id,
-                ttl: 1000 * 60
-            }).then((res) => {
-                setQr(res.data.qrcode);
-                setEftsCode(res.data.efts);
-                setLoading(false);
-                setState({
-                    "TC": '',
-                    "FName": '',
-                    "SName": '',
-                    "DOB": ''
-                });
-            }).catch((e) => {
-                setError("There was an error saving code to database. Try again.");
-            });
-
-        }).catch((e) => {
-            setError("No user found!");
+        axios.post('http://localhost:5002/generate', {
+            id: user.id,
+            ttl: 1000 * 60 * 60
+        }).then((res) => {
+            setQr(res.data.qrcode);
+            setEftsCode(res.data.efts);
             setLoading(false);
-        })
+        }).catch((e) => {
+            setError("There was an error saving code to database. Try again.");
+        });
     }
 
     return (
@@ -65,16 +35,12 @@ const GenerateCode = () => {
                 <h1>Generate your EFTS code</h1>
             </div>
             <div className={styles.main}>
-                <h2>Enter your credentials</h2>
-                <label onChange={e => handleChange(e)} htmlFor="TC">TC Kimlik Number</label>
-                <input value={state.TC} type="number" onChange={e => handleChange(e)} id="TC" name="TC" placeholder="Your national ID" />
-                <label onChange={e => handleChange(e)} htmlFor="FName">First Name</label>
-                <input value={state.FName} onChange={e => handleChange(e)} id="FName" name="FName" placeholder="First Name" />
-                <label onChange={e => handleChange(e)} htmlFor="SName">Last Name</label>
-                <input value={state.SName} onChange={e => handleChange(e)} id="SName" name="SName" placeholder="Last Name" />
-                <label onChange={e => handleChange(e)} htmlFor="DOB">Date of birth</label>
-                <input value={state.DOB} type="date" onChange={e => handleChange(e)} id="DOB" name="DOB" placeholder="Date of birth" />
-                <button onClick={submitData} disabled={loading}>GENERATE CODE</button>
+                <h2>{user.fname} {user.sname}</h2>
+                <h2>{user.id}</h2>
+                {!eftsCode && !loading && (
+                    <p>You do not have an existing EFTS code, click the button below to generate one.</p>
+                )}
+                <button onClick={handleClick} disabled={loading}>GENERATE CODE</button>
                 {error !== "" ? (<p>{error}</p>) : ''}
                 {loading ? <p>Loading...</p> : null}
                 {eftsCode !== '' ? <h2>{eftsCode}</h2> : null}

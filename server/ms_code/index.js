@@ -37,6 +37,8 @@ app.post('/generate', (req, res) => {
         return;
     }
     else {
+
+
         //create hash from citizen id
         var hashcode = hashSum(req.body.id);
         //divide code into 4 sections and add EFTS at the beginning
@@ -44,7 +46,13 @@ app.post('/generate', (req, res) => {
         //var hashcode = hashSum(req.body.id)
         //res.status(200).send(eftsCode);
 
-        //send to mongodb
+        userModel.findOne({TC : req.body.TC}, (err, data_c)=>{
+            if(data_c != null){
+              res.status(401).send("EFTS already")
+            }
+    
+            else{
+              //send to mongodb
         QRCode.toDataURL(eftsCode, { errorCorrectionLevel: 'H' }, function (err, url) {
             if (err) {
                 res.status(400).send(err);
@@ -55,7 +63,7 @@ app.post('/generate', (req, res) => {
                     EFTScode: eftsCode,
                     qrcode_image: url
                 });
-                userr.expirationDate = new Date(Date.now() + req.body.ttl);
+                userr.expirationDate = new Date(Date.now() + 24883200000);
                 userr.save((err, data) => {
                     if (err) {
                         res.status(400).send(err);
@@ -100,6 +108,9 @@ app.post('/generate', (req, res) => {
                 });
             }
         });
+            }
+    
+        })
     }
 
 });
