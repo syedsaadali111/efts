@@ -46,7 +46,7 @@ app.post('/generate', (req, res) => {
         //var hashcode = hashSum(req.body.id)
         //res.status(200).send(eftsCode);
 
-        userModel.findOne({TC : req.body.TC}, (err, data_c)=>{
+        userModel.findOne({TC : req.body.id}, (err, data_c)=>{
             if(data_c != null){
               res.status(401).send("EFTS already")
             }

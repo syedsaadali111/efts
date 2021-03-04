@@ -8,8 +8,6 @@
 
   id: number --> this is the TC Kimlik number
 
-  ttl: number --> this is the expiration time of the EFTS code 
-
 }
 
 #### Response on success

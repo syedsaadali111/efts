@@ -19,6 +19,18 @@ mongoose.connect(connectionURL, {
 .catch((err) => console.log(err)); //DB connection made. 
 
 
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if (token == null) return res.sendStatus(401)
+  
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+      if (err) return res.sendStatus(403)
+      req.user = user
+      next()
+    })
+  }
+
 
 app.post('/signup',async (req,res)=>{
   const PhashedPassword = await bcrypt.hash(req.body.password, 10)
@@ -139,17 +151,7 @@ app.get('/getInfo', authenticateToken, (req, res) => {
 
 })
 
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-  if (token == null) return res.sendStatus(401)
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403)
-    req.user = user
-    next()
-  })
-}
 
 app.post('/createRule',authenticateToken,(req,res)=>{
     p_institute_rule.findOne({id:req.body.id},(err,data)=>{

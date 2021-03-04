@@ -1,4 +1,4 @@
-## This folder contains the microservice of  Public Institution.
+## This folder contains the microservice of Public Institution.
 The Port Number used by the Authentication Microservice is : 5004
 
 For routes /deleteRule, /modifyRule , /getRule , /createRule, /getInfo  add token to header for authentication.
