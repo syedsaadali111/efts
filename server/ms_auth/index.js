@@ -44,7 +44,7 @@ app.post('/signup',async (req,res)=>{
                   console.log(err);
               }else{
                   const new_login  = new login_user({
-                    TC : req.body.TC,
+                    id : req.body.TC,
                     password : hashedPassword
                   })
                 
