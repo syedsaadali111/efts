@@ -19,18 +19,6 @@ mongoose.connect(connectionURL, {
 .catch((err) => console.log(err)); //DB connection made. 
 
 
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    if (token == null) return res.sendStatus(401)
-  
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-      if (err) return res.sendStatus(403)
-      req.user = user
-      next()
-    })
-  }
-
 
 app.post('/signup',async (req,res)=>{
   const PhashedPassword = await bcrypt.hash(req.body.password, 10)
@@ -112,13 +100,15 @@ app.post('/login', async (req, res) => {
         const userStr = JSON.stringify(data, replacer);
         var output = userStr.replace(/['"]+/g, '')
         
+        PublicInstitute.findOne({id : req.body.id}, async (err,data_p)=>{
         try {
                 if(await bcrypt.compare(req.body.password, output, function(err, matches) {
                     if (err)
                       res.json({id : err});
                     else if (matches){
                       const username =  req.body.id
-                      const user = {id  :  username}
+                      const user = {id  :  username,
+                                     rule_issuer : data_p.rule_issuer}
                       const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
                       res.json({access_token : access_token})
                     }
@@ -128,6 +118,8 @@ app.post('/login', async (req, res) => {
               } catch {
                 res.status(500).send("Error")
               }
+        })
+        
       
         }
       }); 
@@ -151,9 +143,20 @@ app.get('/getInfo', authenticateToken, (req, res) => {
 
 })
 
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null) return res.sendStatus(401)
 
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403)
+    req.user = user
+    next()
+  })
+}
 
 app.post('/createRule',authenticateToken,(req,res)=>{
+    if(req.user.rule_issuer == true){
     p_institute_rule.findOne({id:req.body.id},(err,data)=>{
         if(err){
             res.send(err)
@@ -165,7 +168,7 @@ app.post('/createRule',authenticateToken,(req,res)=>{
 
             const rule = new p_institute_rule({
                 id: req.body.id,
-                p_id : req.body.p_id,
+                p_id : req.user.id,
                 name: req.body.name,
                 description: req.body.description,
                 context : req.body.context,
@@ -200,6 +203,10 @@ app.post('/createRule',authenticateToken,(req,res)=>{
         }
 
     })
+}
+else{
+    res.status(400).send("Public Institute is not allowed to issue Rule.")
+}
         
 
 })
@@ -220,6 +227,7 @@ app.get('/getRule',authenticateToken,(req,res)=>{
 })
 
 app.post('/modifyRule',authenticateToken,(req,res)=>{
+    if(req.user.rule_issuer == true ){
     p_institute_rule.findOneAndUpdate({id:req.body.id},{
             name: req.body.name,
             description: req.body.description,
@@ -251,6 +259,12 @@ app.post('/modifyRule',authenticateToken,(req,res)=>{
         
 
     })
+}
+else {
+    res.status(400).send("Public Institute is not allowed to modify Rule.")
+
+
+}
 })
 
 app.get('/deleteRule',authenticateToken,(req,res)=>{
