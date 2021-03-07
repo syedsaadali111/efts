@@ -5,9 +5,11 @@ const login_institute = require('./public_institute_logindb');
 const PublicInstitute = require('./public_institutedb');
 const p_institute_rule = require ('./public_institute_rulesdb'); 
 const jwt = require('jsonwebtoken')
+const cors = require("cors"); 
 require('dotenv').config()
 const app = express()
 
+app.use(cors());
 app.use(express.json())
 
 const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
