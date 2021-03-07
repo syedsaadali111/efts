@@ -44,7 +44,7 @@ app.post('/signup',async (req,res)=>{
                   console.log(err);
               }else{
                   const new_login  = new login_user({
-                    TC : req.body.TC,
+                    id : req.body.TC,
                     password : hashedPassword
                   })
                 
@@ -52,8 +52,16 @@ app.post('/signup',async (req,res)=>{
                       if(err){
                         res.status(500).send(err);
                       }else{
-                        
-                      res.status(200).send("User Created");
+                      
+                        //create citizen node in neo4j
+                      axios.post(('http://localhost:5000/citizen'), {
+                        id: req.body.TC
+                      }).then(() => {
+                        res.status(200).send("User Created");
+                      }).catch( () => {
+                          console.log("Neo4j error");
+                      });
+
                     }
                     })
               }
