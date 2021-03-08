@@ -9,8 +9,9 @@ require('dotenv').config()
 const app = express()
 const cors = require("cors"); 
 
-app.use(cors());
 app.use(express.json())
+app.use(cors());
+app.use(express.urlencoded());
 
 const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
 mongoose.connect(connectionURL, {
@@ -115,9 +116,8 @@ app.post('/login', async (req, res) => {
                       res.json({access_token : access_token})
                     }
                     else
-                        //res.json({access_token : null});
-                        res.sendStatus(500);
-                  }));
+                    res.sendStatus(500);
+                }));
               } catch {
                 res.status(500).send("Error")
               }
@@ -131,8 +131,8 @@ app.post('/login', async (req, res) => {
 
 
 
-app.get('/getInfo', authenticateToken, (req, res) => {
-    PublicInstitute.findOne({email : req.user.email}, (err,data) => {
+app.get('/getRules', authenticateToken, (req, res) => {
+    p_institute_rule.find({p_id : req.user.p_id}, (err,data) => {
       if (err) {
         res.status(500).send("err");
       } 
@@ -145,6 +145,22 @@ app.get('/getInfo', authenticateToken, (req, res) => {
     })
 
 })
+
+app.get('/getRuleInfo', authenticateToken, (req, res) => {
+    p_institute_rule.findById(req.body._id, (err,data) => {
+      if (err) {
+        res.status(500).send(err);
+      } 
+      else if (data == null){
+          res.status(400).send("no such user");                                              //If the user DOES NOT EXITS, then this message will be send as response.
+      }
+      else {
+        res.status(200).json(data)
+      }
+    })
+
+})
+
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization']
@@ -160,16 +176,28 @@ function authenticateToken(req, res, next) {
 
 app.post('/createRule',authenticateToken,(req,res)=>{
     if(req.user.rule_issuer == true){
-    p_institute_rule.findOne({id:req.body.id},(err,data)=>{
+    p_institute_rule.findOne({
+        name:req.body.name,
+        context : req.body.context,
+        startDate: req.body.sdate,
+        endDate: req.body.edate,
+        days: req.body.days,
+        priority: req.body.priority,
+        timeFrom : req.body.timeFrom,
+        timeTo: req.body.timeTo,
+        minAge :req.body.minAge,
+        maxAge : req.body.maxAge,
+        ruleActive : req.body.ruleActive
+    
+    },(err,data)=>{
         if(err){
             res.send(err)
         }
         else if(data){
-            res.send("Rule is already exists")
+            res.send("Rule is already exists with same fields")
         }
         else{
             const rule = new p_institute_rule({
-                id: req.body.id,
                 p_id : req.user.p_id,
                 name: req.body.name,
                 description: req.body.description,
@@ -182,11 +210,15 @@ app.post('/createRule',authenticateToken,(req,res)=>{
                 timeTo: req.body.timeTo,
                 minAge :req.body.minAge,
                 maxAge : req.body.maxAge,
-                travelFrom : req.body.travelFrom,
-                travelTo: req.body.travelTo,
                 ruleActive : req.body.ruleActive
             })
-           
+
+            req.body.travelFrom.forEach(element =>{
+                rule.travelFrom.push(element)
+            });
+            req.body.travelTo.forEach(element =>{
+                rule.travelTo.push(element)
+            });
             req.body.occupationDeny.forEach(element => {
                 rule.occupationDeny.push(element);
         
@@ -211,23 +243,10 @@ else{
 })
 
 
-app.get('/getRule',authenticateToken,(req,res)=>{
-    p_institute_rule.findOne({id:req.body.id},(err,data)=>{
-        if(err){
-            res.send(err);
-        }else if(data == null) {
-            res.status(400).send("Rule not found")
-        }
-        else{
-            res.status(200).send(data);
-        }
-
-    })
-})
 
 app.post('/modifyRule',authenticateToken,(req,res)=>{
     if(req.user.rule_issuer == true ){
-    p_institute_rule.findOneAndUpdate({id:req.body.id},{
+    p_institute_rule.findByIdAndUpdate(req.body._id,{
             name: req.body.name,
             description: req.body.description,
             context : req.body.context,
@@ -239,10 +258,12 @@ app.post('/modifyRule',authenticateToken,(req,res)=>{
             timeTo: req.body.timeTo,
             minAge :req.body.minAge,
             maxAge : req.body.maxAge,
-            travelFrom : req.body.travelFrom,
-            travelTo: req.body.travelTo,
             ruleActive : req.body.ruleActive,
-            "$set" : { occupationDeny: req.body.occupationDeny}
+            "$set" : {
+                travelFrom : req.body.travelFrom,
+                travelTo: req.body.travelTo,
+                occupationDeny: req.body.occupationDeny
+            }
     },(err,data)=>{
         if(err){
             res.send(err)
@@ -268,7 +289,7 @@ else {
 app.get('/deleteRule',authenticateToken,(req,res)=>{
     if(req.user.rule_issuer == true){
 
-    p_institute_rule.findOneAndDelete({id:req.body.id},(err,data)=>{
+    p_institute_rule.findByIdAndDelete(req.body._id,(err,data)=>{
         if(err){
             res.send(err)
         }
