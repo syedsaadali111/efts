@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 const rules = mongoose.Schema({
     id: Number,
-    p_id : Number,
+    p_id : String,
     name: String,
     description: String,
     context : String,
@@ -14,9 +14,8 @@ const rules = mongoose.Schema({
     timeTo: String,
     minAge :Number,
     maxAge : Number,
-    travelFrom : String,
-    travelTo: String,
-    occupationAllow : [String],
+    travelFrom : [String],
+    travelTo: [String],
     occupationDeny : [String],
     ruleActive : Boolean
     });
