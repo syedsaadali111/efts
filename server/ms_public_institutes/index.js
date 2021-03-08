@@ -131,7 +131,7 @@ app.post('/login', async (req, res) => {
 
 
 app.get('/getInfo', authenticateToken, (req, res) => {
-  PublicInstitute.findOne({id : req.user.id}, (err,data) => {
+  PublicInstitute.findOne({email : req.user.email}, (err,data) => {
     if (err) {
       res.status(500).send("err");
     } 
