@@ -82,7 +82,7 @@ const SignUp = () => {
                 setLoading(false);
                 history.push("/login");
             }).catch( () => {
-                setMsg('A server error occured, try again in a while.');
+                setMsg('Email is already in use.');
                 setLoading(false);
             })
         } else {
