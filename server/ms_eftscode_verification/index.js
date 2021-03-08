@@ -1,10 +1,12 @@
 const userModel = require('./eftscodedb');
 const Citizens = require('./citizendb'); 
 const mongoose = require('mongoose'); 
-const express = require('express')
+const express = require('express');
+const cors = require('cors');
 
 const app = express()
 app.use(express.json());
+app.use(cors());
 
 const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
 mongoose.connect(connectionURL, {
@@ -17,8 +19,7 @@ mongoose.connect(connectionURL, {
 app.post('/verify', (req, res) => {
   userModel.findOne({"Codes.EFTScode": req.body.efts},(err, data_c)=>{
               if(data_c == null){
-                  res.send("Code is not present")
-
+                  res.status(404).send("Code is not present");
               }
               else {
                 Citizens.findOne({TC : data_c.TC},(err,data)=>{

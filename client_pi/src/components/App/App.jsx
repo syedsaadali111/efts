@@ -5,6 +5,7 @@ import SignUp from '../../pages/SignUp/SignUp';
 import CreateRule from '../../pages/CreateRule/CreateRule';
 import AuthProvider from '../AuthProvider/AuthProvider';
 import Home from '../../pages/Home/Home';
+import Verify from '../../pages/Verify/Verify';
 
 
 function App() {
@@ -23,6 +24,9 @@ function App() {
           </Route>
           <Route path="/rule">
             <CreateRule/>
+          </Route>
+          <Route path="/verify">
+            <Verify/>
           </Route>
         </AuthProvider>
         <Redirect to="/" />

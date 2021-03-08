@@ -17,7 +17,6 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        //TODO: Send request to /login, get token, and save it in local storage, then redirect to home page
         setLoading(true);
         console.log("submit");
         axios.post('http://localhost:5004/login', formValues).then( (res) => {
@@ -44,8 +43,8 @@ const Login = () => {
             <div className={styles.main}>
                 <h2>Login as a public institute</h2>
                 <form onSubmit={ (e) => { handleSubmit(e) }}>
-                    <label>National Id:</label>
-                    <input type="text" name="email" id="email" placeholder="9xxxxxxxxxx" value={formValues.email} onChange={ (e) => handleChange(e) }/>
+                    <label>Email</label>
+                    <input type="text" name="email" id="email" placeholder="someone@institute.com" value={formValues.email} onChange={ (e) => handleChange(e) }/>
                     <label>Password:</label>
                     <input type="password" name="password" id="password" value={formValues.password} onChange={ (e) => handleChange(e) }/>
                     {msg && <p>{msg}</p>}

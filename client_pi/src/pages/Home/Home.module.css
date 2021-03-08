@@ -1,0 +1,25 @@
+.main button {
+    width: min(250px, 100%);
+    margin: 20px auto;
+    border-radius: 30px;
+    padding: 20px;
+    background-color: #ba1b08;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+}
+
+.main button:hover{
+    cursor: pointer;
+}
+
+.main button:focus{
+    outline: none;
+}
