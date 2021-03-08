@@ -111,7 +111,9 @@ app.post('/login', async (req, res) => {
                       const username =  req.body.email
                       const user = {email  :  username,
                                     rule_issuer : data_p.rule_issuer,
-                                    p_id : data_p._id}
+                                    p_id : data_p._id,
+                                    context :  data_p.context
+                                  }
                       const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
                       res.json({access_token : access_token})
                     }
@@ -131,7 +133,7 @@ app.post('/login', async (req, res) => {
 
 
 app.get('/getInfo', authenticateToken, (req, res) => {
-  PublicInstitute.findOne({email : req.user.email}, (err,data) => {
+  PublicInstitute.findOne({id : req.user.id}, (err,data) => {
     if (err) {
       res.status(500).send("err");
     } 
@@ -144,6 +146,7 @@ app.get('/getInfo', authenticateToken, (req, res) => {
   })
 
 })
+
 
 
 app.get('/getRules', authenticateToken, (req, res) => {
@@ -193,7 +196,7 @@ app.post('/createRule',authenticateToken,(req,res)=>{
     if(req.user.rule_issuer == true){
     p_institute_rule.findOne({
         name:req.body.name,
-        context : req.body.context,
+        context : req.user.context,
         startDate: req.body.sdate,
         endDate: req.body.edate,
         days: req.body.days,
