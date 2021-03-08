@@ -12,7 +12,6 @@ const SignUp = () => {
 
     const [formState, setFormState] = useState(
         {
-            id: "",
             name: "",
             context: "",
             rule_issuer: false,
@@ -41,7 +40,6 @@ const SignUp = () => {
         e.preventDefault();
         console.log("submit");
         if (
-            formState.id &&
             formState.name &&
             formState.context &&
             formState.address &&
@@ -70,7 +68,6 @@ const SignUp = () => {
                 setMsg('User Created Successfully.');
                 setFormState(
                     {
-                        id: "",
                         name: "",
                         context: "",
                         rule_issuer: false,
@@ -101,8 +98,6 @@ const SignUp = () => {
             </div>
             <div className={styles.main}>
                 <form onSubmit={(e) => handleSubmit(e)}>
-                    <label htmlFor="id">Id</label>
-                    <input value={formState.id} type="number" onChange={e => handleChange(e)} id="id" name="id" placeholder="id" />
                     <label htmlFor="name">Institute title</label>
                     <input value={formState.name} onChange={e => handleChange(e)} id="name" name="name" placeholder="e.g. Health Ministry" />
                     <label htmlFor="description">Description</label>

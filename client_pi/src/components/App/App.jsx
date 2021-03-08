@@ -3,6 +3,8 @@ import {Route, Switch, Redirect} from 'react-router-dom';
 import Login from '../../pages/Login/Login';
 import SignUp from '../../pages/SignUp/SignUp';
 import CreateRule from '../../pages/CreateRule/CreateRule';
+import AuthProvider from '../AuthProvider/AuthProvider';
+import Home from '../../pages/Home/Home';
 
 
 function App() {
@@ -15,20 +17,14 @@ function App() {
         <Route path="/signup">
           <SignUp />
         </Route>
-        <Route path="/rule">
-          <CreateRule/>
-        </Route>
-        {/* <AuthProvider>
+        <AuthProvider>
           <Route exact path="/">
             <Home/>
           </Route>
-          <Route path="/filiation">
-            <CreateEntry />
+          <Route path="/rule">
+            <CreateRule/>
           </Route>
-          <Route path="/generate">
-            <GenerateCode />
-          </Route>
-        </AuthProvider> */}
+        </AuthProvider>
         <Redirect to="/" />
       </Switch>
     </>

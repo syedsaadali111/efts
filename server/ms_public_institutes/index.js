@@ -7,7 +7,9 @@ const p_institute_rule = require ('./public_institute_rulesdb');
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const app = express()
+const cors = require("cors"); 
 
+app.use(cors());
 app.use(express.json())
 
 const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
@@ -113,7 +115,8 @@ app.post('/login', async (req, res) => {
                       res.json({access_token : access_token})
                     }
                     else
-                      res.json({access_token : null});
+                        //res.json({access_token : null});
+                        res.sendStatus(500);
                   }));
               } catch {
                 res.status(500).send("Error")
