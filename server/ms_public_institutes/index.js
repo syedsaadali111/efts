@@ -219,7 +219,7 @@ app.post('/createRule',authenticateToken,(req,res)=>{
                 p_id : req.user.p_id,
                 name: req.body.name,
                 description: req.body.description,
-                context : req.body.context,
+                context : req.user.context,
                 startDate: req.body.sdate,
                 endDate: req.body.edate,
                 days: req.body.days,
@@ -267,7 +267,6 @@ app.post('/modifyRule',authenticateToken,(req,res)=>{
     p_institute_rule.findByIdAndUpdate(req.body._id,{
             name: req.body.name,
             description: req.body.description,
-            context : req.body.context,
             startDate: req.body.sdate,
             endDate: req.body.edate,
             days: req.body.days,
