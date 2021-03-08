@@ -130,6 +130,21 @@ app.post('/login', async (req, res) => {
 })
 
 
+app.get('/getInfo', authenticateToken, (req, res) => {
+  PublicInstitute.findOne({id : req.user.id}, (err,data) => {
+    if (err) {
+      res.status(500).send("err");
+    } 
+    else if (data == null){
+        res.status(400).send("no such user");                                              //If the user DOES NOT EXITS, then this message will be send as response.
+    }
+    else {
+      res.status(200).json(data)
+    }
+  })
+
+})
+
 
 app.get('/getRules', authenticateToken, (req, res) => {
     p_institute_rule.find({p_id : req.user.p_id}, (err,data) => {
