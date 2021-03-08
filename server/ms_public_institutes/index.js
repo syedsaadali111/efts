@@ -133,7 +133,7 @@ app.post('/login', async (req, res) => {
 
 
 app.get('/getInfo', authenticateToken, (req, res) => {
-  PublicInstitute.findOne({id : req.user.id}, (err,data) => {
+  PublicInstitute.findOne({email: req.user.email}, (err,data) => {
     if (err) {
       res.status(500).send("err");
     } 
@@ -215,6 +215,7 @@ app.post('/createRule',authenticateToken,(req,res)=>{
             res.send("Rule is already exists with same fields")
         }
         else{
+            console.log(req.user.context);
             const rule = new p_institute_rule({
                 p_id : req.user.p_id,
                 name: req.body.name,

@@ -1,9 +1,10 @@
 import React, {useContext, useState} from 'react';
 import styles from './CreateRule.module.css';
 import axios from 'axios';
-import {Link, useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {Multiselect} from 'multiselect-react-dropdown';
 import { UserContext } from '../../helpers/userContext';
+import { getJWT } from '../../helpers/jwt';
 
 const multiselectStyles = {
     multiselectContainer: {
@@ -60,10 +61,9 @@ const CreateRule = () => {
         {
             name: "",
             description: "",
-            context: "",
             priority: "",
-            startDate: "",
-            endDate: "",
+            sdate: "",
+            edate: "",
             minAge: "",
             maxAge: "",
             timeFrom: "",
@@ -76,8 +76,6 @@ const CreateRule = () => {
     );
     const [msg,setMsg] = useState('');
     const [loading, setLoading] = useState(false);
-    
-    const history = useHistory();
     
     const handleChange = (e) => {
         setFormState( {
@@ -93,24 +91,31 @@ const CreateRule = () => {
         if (
             formState.name &&
             formState.description &&
-            formState.context &&
             formState.priority &&
-            formState.startDate &&
+            formState.sdate &&
             formState.days.length !== 0
         ) {
     
-            const userData = {...formState};
+            let userData = {...formState};
+            userData = {
+                ...userData,
+                ruleActive: true, 
+                sdate: formState.sdate.split('-').reverse().join('/'),
+                edate: formState.edate.split('-').reverse().join('/'),
+            };
             console.log(userData);
-            axios.post('http://localhost:5004/createRule', userData).then( (res) => {
+            
+            const jwt = getJWT();
+
+            axios.post('http://localhost:5004/createRule', userData, { headers: {Authorization: `Bearer ${jwt}`} }).then( (res) => {
                 setMsg('User Created Successfully.');
                 setFormState(
                     {
                         name: "",
                         description: "",
-                        context: "",
                         priority: "",
-                        startDate: "",
-                        endDate: "",
+                        sdate: "",
+                        edate: "",
                         minAge: "",
                         maxAge: "",
                         timeFrom: "",
@@ -122,7 +127,7 @@ const CreateRule = () => {
                     }
                 );
                 setLoading(false);
-                history.push("/login");
+                setMsg('Rule created successfully');
             }).catch( () => {
                 setMsg('A server error occured, try again in a while.');
                 setLoading(false);
@@ -184,16 +189,6 @@ const CreateRule = () => {
                         <input value={formState.description} onChange={e => handleChange(e)} id="description" name="description" placeholder="Institute description"/>
                         <div className={styles.optionContainer}>
                             <div className={styles.inner}>
-                                <label htmlFor="context">*Context</label>
-                                <select onChange={e => handleChange(e)} id="context" name="context" value={formState.context}>
-                                    <option value="">&lt;choose&gt;</option>
-                                    <option value="health">Health</option>
-                                    <option value="food">Food</option>
-                                    <option value="recreational">Recreational</option>
-                                    <option value="travel">Travel</option>
-                                </select>
-                            </div>
-                            <div className={styles.inner}>
                             <label htmlFor="priority">*Priority</label>
                                 <select onChange={e => handleChange(e)} id="priority" name="priority" value={formState.priority}>
                                     <option value="">&lt;choose&gt;</option>
@@ -205,10 +200,10 @@ const CreateRule = () => {
                                 </select>   
                             </div>
                         </div>
-                        <label htmlFor="startDate">*Applicable from</label>
-                        <input value={formState.startDate} type="date" onChange={e => handleChange(e)} id="startDate" name="startDate" placeholder="Date of birth" />
-                        <label htmlFor="endDate">Applicable till (leave blank if indefinite)</label>
-                        <input value={formState.endDate} type="date" onChange={e => handleChange(e)} id="endDate" name="endDate" placeholder="Date of birth" />
+                        <label htmlFor="sdate">*Applicable from</label>
+                        <input value={formState.sdate} type="date" onChange={e => handleChange(e)} id="sdate" name="sdate" placeholder="Date of birth" />
+                        <label htmlFor="edate">Applicable till (leave blank if indefinite)</label>
+                        <input value={formState.edate} type="date" onChange={e => handleChange(e)} id="edate" name="edate" placeholder="Date of birth" />
                         <label>Apply rule between these hours<br></br>(Leave blank to apply rule throughout the day):</label>
                         <div className={styles.timeContainer}>
                             <label htmlFor="timeFrom" >From</label>
