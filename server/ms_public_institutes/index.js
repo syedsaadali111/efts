@@ -5,11 +5,9 @@ const login_institute = require('./public_institute_logindb');
 const PublicInstitute = require('./public_institutedb');
 const p_institute_rule = require ('./public_institute_rulesdb'); 
 const jwt = require('jsonwebtoken')
-const cors = require("cors"); 
 require('dotenv').config()
 const app = express()
 
-app.use(cors());
 app.use(express.json())
 
 const connectionURL = "mongodb+srv://admin:admin@efts.zqahh.mongodb.net/EFTS?retryWrites=true&w=majority";
@@ -24,13 +22,12 @@ mongoose.connect(connectionURL, {
 
 app.post('/signup',async (req,res)=>{
   const PhashedPassword = await bcrypt.hash(req.body.password, 10)
-  PublicInstitute.findOne({id : req.body.id},(err,data_first)=>{
+  PublicInstitute.findOne({email : req.body.email},(err,data_first)=>{
       if(data_first != null){
         res.status(401).send("Data is already present")
       }
       else{
                 const result= new PublicInstitute({
-                id : req.body.id,
                 name : req.body.name,
                 context : req.body.context,
                 rule_issuer : req.body.rule_issuer,
@@ -44,7 +41,7 @@ app.post('/signup',async (req,res)=>{
                   console.log(err);
               }else{
                 const plogin = new login_institute({
-                    id : req.body.id,
+                    email : req.body.email,
                     password : PhashedPassword
 
                 })
@@ -53,7 +50,7 @@ app.post('/signup',async (req,res)=>{
                     if(err){
                         console.log(err);
                     }else{
-                        res.status(200).send("Insitute Created");
+                        res.status(200).send("Institute Created");
 
                     }
                 })
@@ -69,7 +66,7 @@ app.post('/forgotpassword', async (req, res) => {
  
   
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    login_institute.findOneAndUpdate({id: req.body.id},
+    login_institute.findOneAndUpdate({email: req.body.email},
                          {password: hashedPassword},
                          (err, data) => {
             if (err) {
@@ -88,7 +85,7 @@ app.post('/forgotpassword', async (req, res) => {
     
 
 app.post('/login', async (req, res) => {    
-    login_institute.findOne({id: req.body.id},  async  (err, data) => {
+    login_institute.findOne({email: req.body.email},  async  (err, data) => {
         if (err) {
           res.status(500).send(err);
         } 
@@ -102,15 +99,16 @@ app.post('/login', async (req, res) => {
         const userStr = JSON.stringify(data, replacer);
         var output = userStr.replace(/['"]+/g, '')
         
-        PublicInstitute.findOne({id : req.body.id}, async (err,data_p)=>{
+        PublicInstitute.findOne({email : req.body.email}, async (err,data_p)=>{
         try {
                 if(await bcrypt.compare(req.body.password, output, function(err, matches) {
                     if (err)
-                      res.json({id : err});
+                      res.json({email : err});
                     else if (matches){
-                      const username =  req.body.id
-                      const user = {id  :  username,
-                                     rule_issuer : data_p.rule_issuer}
+                      const username =  req.body.email
+                      const user = {email  :  username,
+                                    rule_issuer : data_p.rule_issuer,
+                                    p_id : data_p._id}
                       const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
                       res.json({access_token : access_token})
                     }
@@ -131,7 +129,7 @@ app.post('/login', async (req, res) => {
 
 
 app.get('/getInfo', authenticateToken, (req, res) => {
-    PublicInstitute.findOne({id : req.user.id}, (err,data) => {
+    PublicInstitute.findOne({email : req.user.email}, (err,data) => {
       if (err) {
         res.status(500).send("err");
       } 
@@ -167,10 +165,9 @@ app.post('/createRule',authenticateToken,(req,res)=>{
             res.send("Rule is already exists")
         }
         else{
-
             const rule = new p_institute_rule({
                 id: req.body.id,
-                p_id : req.user.id,
+                p_id : req.user.p_id,
                 name: req.body.name,
                 description: req.body.description,
                 context : req.body.context,
@@ -186,10 +183,7 @@ app.post('/createRule',authenticateToken,(req,res)=>{
                 travelTo: req.body.travelTo,
                 ruleActive : req.body.ruleActive
             })
-            req.body.occupationAllow.forEach(element => {
-                rule.occupationAllow.push(element);
-        
-            });
+           
             req.body.occupationDeny.forEach(element => {
                 rule.occupationDeny.push(element);
         
@@ -245,8 +239,7 @@ app.post('/modifyRule',authenticateToken,(req,res)=>{
             travelFrom : req.body.travelFrom,
             travelTo: req.body.travelTo,
             ruleActive : req.body.ruleActive,
-            "$set" : {  occupationAllow:req.body.occupationAllow,
-                        occupationDeny: req.body.occupationDeny}
+            "$set" : { occupationDeny: req.body.occupationDeny}
     },(err,data)=>{
         if(err){
             res.send(err)
@@ -270,6 +263,8 @@ else {
 })
 
 app.get('/deleteRule',authenticateToken,(req,res)=>{
+    if(req.user.rule_issuer == true){
+
     p_institute_rule.findOneAndDelete({id:req.body.id},(err,data)=>{
         if(err){
             res.send(err)
@@ -282,7 +277,12 @@ app.get('/deleteRule',authenticateToken,(req,res)=>{
         }
 
     })
+    }
+    else{
 
+        res.status(400).send("Public Institute is not allowed to delete Rule.")
+
+    }
 
 })
 

@@ -1,13 +1,9 @@
 var mongoose = require('mongoose');
 
-var userSchema = new mongoose.Schema({
-    TC: {
-        type: Number,
-        required: true,
-    },
+var Codes_EFTS = new mongoose.Schema({
     EFTScode: {
         type: String,
-        required: true,
+        required: true
     },
     qrcode_image : {
         type: String,
@@ -21,6 +17,21 @@ var userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
+
+})
+
+var userSchema = new mongoose.Schema({
+    TC: {
+        type: Number,
+        required: true
+    },
+    Status: {
+        type: Boolean,
+        required: true,
+        default : false
+    },
+    Codes : [Codes_EFTS]
+
 });
 
-module.exports = mongoose.model('codes', userSchema);
+module.exports = mongoose.model('eftscodes', userSchema);
