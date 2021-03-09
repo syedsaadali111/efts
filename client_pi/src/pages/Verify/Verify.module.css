@@ -1,0 +1,124 @@
+.header {
+    background-color: #7b3229;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.main h2 {
+    text-align: center; 
+    margin-bottom: 40px;
+}
+
+.main p, .main a {
+    text-align: center;
+    color: white;
+}
+
+.main {
+    width: 35%;
+    margin: 20px auto;
+}
+
+.main label {
+    margin-top: 10px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.main input {
+    margin: 10px 0;
+    border-radius: 22px;
+    border: none;
+    padding: 15px;
+    color: #793027;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.main input:focus{
+    outline: none;
+    transform: scale(1.05);
+}
+
+.main button {
+    width: min(250px, 100%);
+    margin: 20px auto;
+    border-radius: 30px;
+    padding: 20px;
+    background-color: #ba1b08;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.main button:hover{
+    cursor: pointer;
+}
+
+.main button:focus{
+    outline: none;
+}
+
+.main button:disabled{
+    cursor: default;
+}
+
+.main form {
+    margin: auto;
+    display: flex;
+    flex-direction: column;   
+}
+
+.resultContainer {
+    text-align: center;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* For Tablets */
+@media only screen and (max-width: 1024px) {
+    .main {
+        width: 70%;
+    }
+}
+
+/* For Mobile Phones */
+@media only screen and (max-width: 600px) {
+    .main {
+        width: 80%;
+    }
+
+    .main h2 {
+        font-size: 20px;
+    }
+
+    .main button {
+        font-size: 15px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .addCodesForm {
+        width: 70%;
+    }
+}

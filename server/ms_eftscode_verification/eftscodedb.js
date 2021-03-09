@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var Codes_EFTS = new mongoose.Schema({
+const codeSchema = mongoose.Schema({
     EFTScode: {
         type: String,
         required: true
@@ -17,7 +17,6 @@ var Codes_EFTS = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-
 })
 
 var userSchema = new mongoose.Schema({
@@ -25,13 +24,12 @@ var userSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    Status: {
-        type: Boolean,
-        required: true,
+    Status : {
+        type : Boolean,
+        required : true,
         default : false
     },
-    Codes : [Codes_EFTS]
-
+    Codes : [codeSchema]
 });
 
-module.exports = mongoose.model('eftscodes', userSchema);
+module.exports = mongoose.model('EFTScodes', userSchema);
