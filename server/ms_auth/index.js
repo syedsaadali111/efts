@@ -163,13 +163,24 @@ app.post('/forgotpassword', async (req, res) => {
               res.status(200).json(result);
             }
             else {
+              let eftsArray = []
+              data_c.Codes.forEach(element => {
+                eftsArray.push(element.EFTScode)
+              });
+
+              let qr_code = []
+
+              data_c.Codes.forEach(element => {
+                qr_code.push(element.qrcode_image)
+              });
+
               const result={
                 id : data.TC,
                 fname : data.FName,
                 sname : data.SName,
                 gender : data.Gender,
-                EFTScode : data_c.EFTScode,
-                QRCode : data_c.qrcode_image
+                EFTScode : eftsArray,                
+                QRCode : qr_code
               }
               res.status(200).json(result);                                         //If the user exists, the Identity Number of the user is sent as respnse. 
             }
