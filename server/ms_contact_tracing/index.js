@@ -62,11 +62,13 @@ app.post('/citizen', (req, res) => {
 app.post('/filiation', (req, res) => {
     
     if(req.body.from == undefined || req.body.to == undefined || !Array.isArray(req.body.to)) {
-        res.status(400).json({msg: "Required Body Params: to, from[]"});
+        res.status(400).json({msg: "Required Body Params: from, to[]"});
         return;
     }
 
     //get the ids of the citizens here
+
+    //[] <-- all the ids that the user entered.
 
     const session = driver.session();
 

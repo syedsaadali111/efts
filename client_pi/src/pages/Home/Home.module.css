@@ -1,6 +1,6 @@
-.main button {
+.main a, .main button {
     width: min(250px, 100%);
-    margin: 20px auto;
+    margin: 20px;
     border-radius: 30px;
     padding: 20px;
     background-color: #ba1b08;
@@ -9,6 +9,8 @@
     font-size: 18px;
     border: none;
     font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    text-decoration: none;
 }
 
 .main {
@@ -22,4 +24,8 @@
 
 .main button:focus{
     outline: none;
+}
+
+a {
+    width: fit-content;
 }

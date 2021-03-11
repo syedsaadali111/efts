@@ -5,7 +5,7 @@ import { UserContext } from '../../helpers/userContext';
 
 const GenerateCode = () => {
 
-    const user = useContext(UserContext);
+    const {user, setUser} = useContext(UserContext);
 
     const [error, setError] = useState("");
     const [qr, setQr] = useState(user.QRCode);
@@ -23,9 +23,17 @@ const GenerateCode = () => {
         }).then((res) => {
             setQr([...qr, res.data.qrcode]);
             setEftsCode([...eftsCode, res.data.efts]);
+            console.log("USER");
+            console.log(user);
+            setUser({
+                ...user,
+                EFTScode: [...user.EFTScode, res.data.efts],
+                QRCode: [...user.QRCode, res.data.qrcode]
+            });
             setLoading(false);
             setError('Code generated successfully');
-        }).catch((e) => {
+        })
+        .catch((e) => {
             setError("There was an error saving code to database. Try again.");
         });
     }
@@ -39,11 +47,11 @@ const GenerateCode = () => {
                 <h2>{user.fname} {user.sname}</h2>
                 <h2>{user.id}</h2>
                 { eftsCode.length === 0 && !loading && (
-                    <p>You do not have an existing EFTS code, click the button below to generate one.</p>
+                    <p className={styles.alignCenter}>You do not have an existing EFTS code, click the button below to generate one.</p>
                 )}
                 <button onClick={handleClick} disabled={loading}>GENERATE CODE</button>
-                {error !== "" ? (<p>{error}</p>) : ''}
-                {loading ? <p>Loading...</p> : null}
+                {error !== "" ? (<p className={styles.alignCenter}>{error}</p>) : ''}
+                {loading ? <p className={styles.alignCenter}>Loading...</p> : null}
                 {eftsCode.length !== 0 ? (
                     <div className={styles.codesTable}>
                         {eftsCode.map((code, idx) => {
