@@ -21,9 +21,10 @@ const GenerateCode = () => {
             id: user.id,
             ttl: 1000 * 60 * 60
         }).then((res) => {
-            setQr(res.data.qrcode);
-            setEftsCode(res.data.efts);
+            setQr([...qr, res.data.qrcode]);
+            setEftsCode([...eftsCode, res.data.efts]);
             setLoading(false);
+            setError('Code generated successfully');
         }).catch((e) => {
             setError("There was an error saving code to database. Try again.");
         });
@@ -37,14 +38,24 @@ const GenerateCode = () => {
             <div className={styles.main}>
                 <h2>{user.fname} {user.sname}</h2>
                 <h2>{user.id}</h2>
-                {!eftsCode && !loading && (
+                { eftsCode.length === 0 && !loading && (
                     <p>You do not have an existing EFTS code, click the button below to generate one.</p>
                 )}
                 <button onClick={handleClick} disabled={loading}>GENERATE CODE</button>
                 {error !== "" ? (<p>{error}</p>) : ''}
                 {loading ? <p>Loading...</p> : null}
-                {eftsCode !== '' ? <h2>{eftsCode}</h2> : null}
-                {qr ? (<img style={{ "width": "200px", "height": "200px", "margin": "auto" }} alt="QR Code" src={qr} />) : null}
+                {eftsCode.length !== 0 ? (
+                    <div className={styles.codesTable}>
+                        {eftsCode.map((code, idx) => {
+                            return (
+                                <div className={styles.codesRow} key={code}>
+                                    <h2>{code} <span className={styles.copy} onClick={() => {navigator.clipboard.writeText(code)}}>Copy</span></h2>
+                                    <img style={{ "width": "150px", "height": "150px" }} alt="QR Code" src={qr[idx]} />
+                                </div>
+                            )
+                        })}
+                    </div>
+                ) : null}
             </div>
         </div>
     );

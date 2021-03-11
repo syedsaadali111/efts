@@ -64,7 +64,7 @@
 .main {
     display: flex; 
     flex-direction: column;
-    width: 35%;
+    width: 70%;
     margin: 20px auto;
 }
 
@@ -78,6 +78,41 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+.codesTable {
+    /* border: 1px solid black; */
+    width: min(800px, 100%);
+    margin: auto;
+    /* background-color: white;
+    padding: 10px;
+    border-radius: 10px; */
+}
+
+.codesRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    color: #ba1b08;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.copy {
+    font-size: 12px;
+}
+
+.copy:hover {
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 700px) {
+    .codesRow {
+        display: block;
+        text-align: center;
+    }
 }
 
 /* For Tablets */

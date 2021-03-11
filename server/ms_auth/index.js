@@ -157,8 +157,8 @@ app.post('/forgotpassword', async (req, res) => {
                 fname : data.FName,
                 sname : data.SName,
                 gender : data.Gender,
-                EFTScode : null,
-                QRCode : null
+                EFTScode : [],
+                QRCode : []
               }
               res.status(200).json(result);
             }

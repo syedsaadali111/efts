@@ -1,16 +1,26 @@
 import React, { useContext } from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import { UserContext } from '../../helpers/userContext';
+import styles from './Home.module.css';
+
 const Home = () => {
+
+    const history = useHistory();
+
+    const handleLogout = () => {
+        localStorage.removeItem('jwt');
+        history.push('/login');
+    }
 
     const user = useContext(UserContext);
 
     return (
-        <>
+        <div className={styles.main}>
             <h1>{user.name}</h1>
-            <Link to='/filiation'>/filiation</Link>
-            <Link to='/generate'>/generate</Link>
-        </>
+            <Link to='/filiation'>Contact Tracing</Link>
+            <Link to='/generate'>Your EFTS codes</Link>
+            <button onClick={handleLogout}>Logout</button>
+        </div>
     );
 }
  

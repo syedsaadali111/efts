@@ -9,12 +9,12 @@ app.use(cors());
 const neo_uri = 'neo4j://18.216.10.216:7687';
 const driver = neo4j.driver(neo_uri, neo4j.auth.basic('neo4j', 'efts'));
 
-/* FOR FUTURE REFERENCE, LEAVING THIS CODE HERE */
+
 app.post('/citizen', (req, res) => {
     const session = driver.session();
 
     const writeTxPromise = session.writeTransaction(async tx => {
-        const result = tx.run('MERGE (p:Citizen {id: toInteger($id), isInfected: false, eftsCode: \'\'}) RETURN p', {id: req.body.id});
+        const result = tx.run('MERGE (p:Citizen {id: toInteger($id), isInfected: false, riskFactor: toFloat(0.0)}) RETURN p', {id: req.body.id});
         return result;
     });
 
@@ -27,37 +27,37 @@ app.post('/citizen', (req, res) => {
     });
 });
 
-app.post('/code', (req, res) => {
+// app.post('/code', (req, res) => {
 
-    if(typeof req.body.id !== "number" || typeof req.body.eftsCode !== "string") {
-        res.status(400).json({msg: "Required Body Params: id, eftsCode"});
-        return;
-    }
+//     if(typeof req.body.id !== "number" || typeof req.body.eftsCode !== "string") {
+//         res.status(400).json({msg: "Required Body Params: id, eftsCode"});
+//         return;
+//     }
 
-    const session = driver.session();
+//     const session = driver.session();
 
-    const writeTxPromise = session.writeTransaction(async tx => {
-        const result = tx.run('MATCH (c:Citizen {id: $id}) ' + 
-                              'SET c.eftsCode = $eftsCode ' + 
-                              'RETURN c', {id: req.body.id, eftsCode: req.body.eftsCode});
-        return result;
-    });
+//     const writeTxPromise = session.writeTransaction(async tx => {
+//         const result = tx.run('MATCH (c:Citizen {id: $id}) ' + 
+//                               'SET c.eftsCode = $eftsCode ' + 
+//                               'RETURN c', {id: req.body.id, eftsCode: req.body.eftsCode});
+//         return result;
+//     });
 
-    writeTxPromise.then((result) => {
-        if(result.records.length == 0) {
-            res.status(400).json({msg: "Failed. Cannot find any citizen with provided id."})
-            return;
-        }
-        res.json({
-            msg: 'Code Added.',
-            updatedNode: result.records[0]
-        });
-    }).catch( (e) => {
-        res.status(400).json({msg: e.code});
-    }).then( () => {
-        session.close();
-    });
-});
+//     writeTxPromise.then((result) => {
+//         if(result.records.length == 0) {
+//             res.status(400).json({msg: "Failed. Cannot find any citizen with provided id."})
+//             return;
+//         }
+//         res.json({
+//             msg: 'Code Added.',
+//             updatedNode: result.records[0]
+//         });
+//     }).catch( (e) => {
+//         res.status(400).json({msg: e.code});
+//     }).then( () => {
+//         session.close();
+//     });
+// });
 
 app.post('/filiation', (req, res) => {
     
@@ -66,12 +66,14 @@ app.post('/filiation', (req, res) => {
         return;
     }
 
+    //get the ids of the citizens here
+
     const session = driver.session();
 
     const writeTxPromise = session.writeTransaction(async tx => {
 
         const promises = req.body.to.map( async eftsCode => {
-            const res = await tx.run('MATCH (c1:Citizen {eftsCode: $from}), (c2:Citizen {eftsCode: $to})'
+            const res = await tx.run('MATCH (c1:Citizen {id: $from}), (c2:Citizen {id: $to})'
                             + 'MERGE (c1)-[r:MET]-(c2)'
                             + 'SET r.timestamp = timestamp()'
                             + 'RETURN c1.eftsCode, c2.eftsCode', {from: req.body.from, to: eftsCode});
