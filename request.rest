@@ -33,3 +33,11 @@ Content-Type: application/json
     "travelTime" : "21:00"
     
 }
+###
+POST http://localhost:5002/generate
+Content-Type: application/json
+
+{
+
+    "ttl" : 1
+}

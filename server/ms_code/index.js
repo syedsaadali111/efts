@@ -38,7 +38,7 @@ app.post('/generate', (req, res) => {
     }
     else {
 
-
+        var days = 86400000 * req.body.ttl;
         //create hash from citizen id
         var hashcode = hashSum(req.body.id);
         //divide code into 4 sections and add EFTS at the beginning
@@ -60,7 +60,7 @@ app.post('/generate', (req, res) => {
                         "Codes":{
                             "EFTScode" : eftsCode,
                             "qrcode_image" : url, 
-                             "expirationDate":new Date(Date.now() + 24883200000)
+                             "expirationDate":new Date(Date.now() + days)
                         }
     
                     }
@@ -72,7 +72,7 @@ app.post('/generate', (req, res) => {
                         Codes :{
                         EFTScode: eftsCode,
                         qrcode_image: url,
-                        expirationDate : new Date(Date.now() + 24883200000)
+                        expirationDate : new Date(Date.now() + days)
                     },
                     });
                     userr.save((err, data) => {
