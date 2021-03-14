@@ -34,10 +34,10 @@ Content-Type: application/json
     
 }
 ###
-POST http://localhost:5002/generate
+POST http://localhost:5000/filiation
 Content-Type: application/json
 
 {
-
-    "ttl" : 1
+    "from" : 99542836758,
+    "to" :  ["EFTS-27df-141d-k7xE", "EFTS-6725-b59e-qPYx"]
 }
