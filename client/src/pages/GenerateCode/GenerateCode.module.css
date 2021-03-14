@@ -68,6 +68,16 @@
     margin: 20px auto;
 }
 
+.ttlContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ttlContainer label, .ttlContainer input {
+    text-align: center;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -98,6 +108,12 @@ input[type=number] {
     background-color: white;
     padding: 10px;
     border-radius: 10px;
+}
+
+.codesRow .left {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .copy {

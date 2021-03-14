@@ -46,9 +46,6 @@ app.post('/generate', (req, res) => {
         //var hashcode = hashSum(req.body.id)
         //res.status(200).send(eftsCode);
 
-        
-
-
         QRCode.toDataURL(eftsCode, { errorCorrectionLevel: 'H' }, function (err, url) {
             if (err) {
                 res.status(400).send(err);
@@ -81,47 +78,13 @@ app.post('/generate', (req, res) => {
                         } else {
                             res.status(200).json({
                                 msg: 'EFTS Code successfully generated and sent as an SMS.',
-                                efts: eftsCode,
-                                id: req.body.id,
-                                qrcode: url,
-                                smsMsg: null
+                                smsMsg: null,
+                                newCode: {
+                                    EFTScode: eftsCode,
+                                    qrcode_image: url, 
+                                    expirationDate: new Date(Date.now() + days)
+                                }
                             });
-
-                            // axios.post('http://localhost:5000/code', {
-                            //     "id": req.body.id,
-                            //     "eftsCode": eftsCode
-                            // }).then( () => {
-                            //     console.log('neo4j code added');
-    
-                            //     //sending an sms with the EFTS code to the user
-                            //     var smsMsg = "\nYour EFTS Code: \n" + eftsCode;
-    
-                            //     twilioClient.messages.create({
-                            //         body: smsMsg,
-                            //         from: '+14793483249',
-                            //         to: '+905454683730',
-                            //         // to: '+905076752437',
-                            //     })
-                            //     .then((msg) => {
-                            //         res.status(200).json({
-                            //             msg: 'EFTS Code successfully generated and sent as an SMS.',
-                            //             efts: eftsCode,
-                            //             id: req.body.id,
-                            //             qrcode: url,
-                            //             smsMsg: msg
-                            //         });
-                            //     })
-                            //     .catch((err) => {
-                            //         console.log(err);
-                            //         res.status(200).json({
-                            //             msg: 'EFTS Code successfully generated and sent as an SMS.',
-                            //             efts: eftsCode,
-                            //             id: req.body.id,
-                            //             qrcode: url,
-                            //             smsMsg: null
-                            //         });
-                            //     });
-                            // })                        
                         }
                     });
                 }
@@ -129,10 +92,12 @@ app.post('/generate', (req, res) => {
                 else{
                     res.status(200).json({
                         msg: 'EFTS Code successfully generated and sent as an SMS.',
-                        efts: eftsCode,
-                        id: req.body.id,
-                        qrcode: url,
-                        smsMsg: null
+                        smsMsg: null,
+                        newCode: {
+                            EFTScode: eftsCode,
+                            qrcode_image: url, 
+                            expirationDate: new Date(Date.now() + days)
+                        }
                     });
                 }
         

@@ -73,38 +73,43 @@ app.post('/citizen', (req, res) => {
 
 app.post('/filiation',async (req, res) => {
     
-    let flagError = false;
+    let flagMsg = null;
 
     if(req.body.from == undefined || req.body.to == undefined || !Array.isArray(req.body.to)) {
-        res.status(400).json({msg: "Required Body Params: from, to[]"});
+        res.status(400).json({msg: "Invalid Parameters"});
         return;
     }
     
     const EFTSpromises = req.body.to.map(async x => {
         return (eftsCodes.findOne({"Codes.EFTScode": x }).exec())
-    })
-    //get the ids of the citizens here
-    const ids = await Promise.all(EFTSpromises)
-    const TC_array = ids.map(obj => {
-        if (obj != null){
-             return(obj.TC)
-        }
-        else {
-            flagError =true;
-        }
-    })
+    });
 
-    if (flagError){
-        res.status(400).send("Invalid EFTS Code")
-        return
+    const ids = await Promise.all(EFTSpromises);
+    
+    const TC_array = ids.map(obj => {
+        if (obj === null){
+            flagMsg = 'One or more EFTS codes are invalid';
+            return obj;
+        }
+
+        if (obj.TC === req.body.from) {
+            flagMsg = 'You cannot enter your own EFTS code here';
+            return obj;
+        }
+        
+        return(obj.TC);
+    });
+
+    if (flagMsg){
+        res.status(400).json({msg: flagMsg });
+        return;
     }
-    // console.log(TC_array)
+    
     const session = driver.session();
 
     const writeTxPromise = session.writeTransaction(async tx => {
 
         const promises = TC_array.map( async id => {
-            // console.log(id)
             const res = await tx.run('MATCH (c1:Citizen {id: $from}), (c2:Citizen {id: $to})'
                             + 'MERGE (c1)-[r:MET]-(c2)'
                             + 'SET r.timestamp = timestamp()'
