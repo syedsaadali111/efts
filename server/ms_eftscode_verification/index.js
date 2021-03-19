@@ -81,144 +81,147 @@ app.post('/verifyRule',(req,res)=>{
           var d1 = Date.parse(traveldate);
           var d2 = Date.parse(data_r[i].startDate);
           var d3 = Date.parse(data_r[i].endDate);
+           
+          let travelFrom = GetZone(req.body.travelFrom)
+          let travelTo = GetZone(req.body.travelTo)
 
           if (d2 < d1){
-            if(data_r[i].travelFrom.includes(req.body.travelFrom) || data_r[i].travelTo.includes(req.body.travelTo)){
+            if(data_r[i].travelFrom.includes(travelFrom) || data_r[i].travelTo.includes(travelTo)){
               console.log("Restricted Zone")
               flag_check_deny = true;
-              // res.send(flag_check_deny)
+              res.status(400).json({status : flag_check_deny})
               break;
             }
             else{
-              if(data_r[i].endDate != null || data_r[i].endDate != ""){
-                var d3 = Date.parse(data_r[i].endDate);
-                if(d1 < d3){
-                  console.log(" date OK")
-                  if (startTime <= checkTime && checkTime <= endTime){
-                      console.log("Hours rule is applicable")
-                      occupDeny =data_r[i].occupationDeny
-                      eftsCode.findOne({"Codes.EFTScode": req.body.eftsCode},  (err,data_e)=>{
+              if(d1 < d3){
+                console.log("Zones Allowed")
+                if(startTime <= checkTime && checkTime <= endTime){
+                  occupDeny =data_r[i].occupationDeny
+                  console.log("Hours rule is applicable")
+                  eftsCode.findOne({"Codes.EFTScode": req.body.eftsCode},(err,data_e)=>{
+                    if(err){
+                      res.sendStatus(500)
+                    }
+                    if (data_e == null){
+                      console.log("EFTS is not present")
+                      flag_check_deny = true;
+                      res.status(400).json({status : flag_check_deny})
+                    }
+                    else {
+                      if(data_e.Status){
+                        flag_check_deny=true
+                        console.log("Person is positive")
+                        res.status(400).json({status : flag_check_deny})
+                      }
+                      else{
+                      Citizens.findOne({TC : data_e.TC },(err,data_c)=>{
                         if(err){
                           res.sendStatus(500)
                         }
-                        if (data_e == null){
-                          console.log("EFTS is not present")
-                          flag_check_deny = true;
-                          // res.send(flag_check_deny)
+                        else if (data_c == null){
+                          res.sendStatus(400)
                         }
-                        else {
-                          Citizens.findOne({TC : data_e.TC },(err,data_c)=>{
-                            if(err){
-                              res.sendStatus(500)
-                            }
-                            else if (data_c == null){
-                              res.sendStatus(400)
+                        else{
+                          const obj = jsonParser(data_c)
+                          if(occupDeny.includes(obj)){
+                            console.log("Denied Occupation!!!")
+                            flag_check_deny = true;
+                            res.status(400).json({status : flag_check_deny})
+                          }
+                          else{
+                          citizen_age = calcAge(GetDateObject(data_c.DOB))
+                          if (MinAge != 0 && MaxAge != 0){
+                            if (MinAge > citizen_age || citizen_age > MaxAge){
+                              flag_check_deny =  true;
+                              console.log("Restricted !!!! ")
+                              res.status(400).json({status : flag_check_deny})
                             }
                             else {
-                              const obj = jsonParser(data_c)
-                              citizen_age = calcAge(GetDateObject(data_c.DOB))
-                              // citizen_age  = 30
-                              if(occupDeny.includes(obj)){
-                                console.log("Allowed Occupation")
-                              }
-                              if (MinAge != 0 && MaxAge == 0){
-                                if (MinAge > citizen_age){
-                                  flag_check_deny =  true;
-                                  console.log("Restricted !!!! ")
-                                  // res.send(flag_check_deny)
-                                }
-                                else {
-                                  console.log("OK !!!!")
-                                }
-                              }
-
-                              else if (MinAge == 0 && MaxAge !=0){
-                                    if (MaxAge < citizen_age){
-                                      flag_check_deny = true;
-                                      console.log("Restricted !!!! ")
-                                      res.send(flag_check_deny)
-
-                                    }
-                                    else {
-                                      console.log("OK !!!!")
-                                    }
-                              }
-
-                              else if (MinAge == 0 && MaxAge == 0){
-                                  console.log("Restricted for all  / send reject ")
-                                  flag_check_deny = true;
-                                  res.send(flag_check_deny)
-
-                              }
-                              else {
-
-                                if (MinAge >  MaxAge){
-                                  if (MinAge > citizen_age && MaxAge < citizen_age)
-                                  {
-                                      flag_check_deny =true;
-                                      console.log("Restricted !!! " + flag_check_deny)
-                                      res.send(flag_check_deny)
-                                  }
-
-                                }
-
-                                if (MinAge > citizen_age || citizen_age > MaxAge){
-                                  
-                                  flag_check_deny = true  
-                                  console.log("Restricted Age : " + flag_check_deny)    
-                                  res.send(flag_check_deny)                        
-                                }
-                                
-                              }
-            
+                              console.log("Age Allowed!!!")
+                              flag_check_deny = false;
+                              res.status(200).json({status : flag_check_deny})
                             }
-                          })
+
+                          }
+                          else if( MinAge !=0 && MaxAge == 0){
+                            if (MinAge > citizen_age){
+                              flag_check_deny =  true;
+                              console.log("Restricted !!!! ")
+                              res.status(400).json({status : flag_check_deny})
+                            }
+                            else {
+                              console.log("Age Allowed!!!")
+                              flag_check_deny = false;
+                              res.status(200).json({status : flag_check_deny})
+                            } 
+                          }
+                          else if (MinAge == 0 && MaxAge !=0){
+                            if (MaxAge < citizen_age){
+                              flag_check_deny = true;
+                              console.log("Restricted !!!! ")
+                              res.status(400).json({status : flag_check_deny})
+      
+                            }
+                            else {
+                              console.log("Age Allowed!!!")
+                              flag_check_deny = false;
+                              res.status(200).json({status : flag_check_deny})
+                            }
+                         }
+                          else if (MinAge == 0 && MaxAge == 0){
+                            console.log("Restricted for all  / send reject ")
+                            flag_check_deny = true;
+                            res.status(400).json({status : flag_check_deny})
+      
+                            }
+                          }
                         }
-            
-                    })
-                    break ; 
-                  }
-                  else{
-                    console.log("Hour Rule is not applicable")
-                    flag_check_deny = true;
-                  }
-                
-                
+                      
+                      })
+                    }
+                    }
+                  })
                 }
-                else if (d1 > d3){
-                  console.log("This rule is inactive due to lesser end date")
-                  flag_check_deny =true;
-                }
-                else{
-                  console.log("No end date ")
+                else {
+                  console.log("Hours rule is not applicable")
+                  flag_check_deny = true;
+                  res.status(400).json({status : flag_check_deny})
+                  break;
                 }
               }
+                
+
             }
+            
           }
           else {
               console.log("This rule is inactive due to greater start date")
-          }
+              flag_check_deny = true
+              res.status(400).json({status : flag_check_deny})
+            }
 
         }else{
           console.log("rule not active")
+          flag_check_deny = true
+          res.status(400).json({status : flag_check_deny})
+        }
+        if(flag_check_deny){
+          console.log("break!!!!!")
+          break;
         }
     }  
 
-    // res.send(flag_check_deny)
-    
-
-
     }).sort({priority : -1})    
-    if(res.send != null)
-      {
-        console.log(res.send)
-      }
-      else{
-        res.send(flag_check_deny)
-      }
   })
 
+  var GetZone = function (dataString){
+           
+    var array = dataString.split('-');
+    var city = array[0];
+    var zone = array[1];
 
+    return zone;
+     }
 
 
 
@@ -227,10 +230,10 @@ function jsonParser(stringValue) {
 
   var string = JSON.stringify(stringValue);
   var objectValue = JSON.parse(string);
-  return objectValue['occupation'];
+  return objectValue['Occupation'];
 }
 
-var GetDateObject = function ( dateString){
+var GetDateObject = function (dateString){
            
   var array = dateString.split('/');
 
