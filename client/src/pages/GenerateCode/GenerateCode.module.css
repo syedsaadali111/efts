@@ -91,12 +91,8 @@ input[type=number] {
 }
 
 .codesTable {
-    /* border: 1px solid black; */
     width: min(800px, 100%);
     margin: auto;
-    /* background-color: white;
-    padding: 10px;
-    border-radius: 10px; */
 }
 
 .codesRow {
