@@ -22,7 +22,7 @@ const GenerateCode = () => {
         setError('');
         setLoading(true);
 
-        if (ttl === '' || parseInt(ttl) === NaN || parseInt(ttl) < 1) {
+        if (ttl === '' || isNaN(parseInt(ttl)) || parseInt(ttl) < 1) {
             setLoading(false);
             setError('The entered value is not allowed');
             return;
