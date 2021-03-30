@@ -86,6 +86,7 @@ const CreateRule = () => {
     
     const handleSubmit = (e) => {
         setLoading(true);
+        setMsg('loading...');
         e.preventDefault();
         console.log("submit");
         if (
@@ -95,6 +96,12 @@ const CreateRule = () => {
             formState.sdate &&
             formState.days.length !== 0
         ) {
+
+            if(!isDatesValid(formState.sdate, formState.edate)) {
+                setLoading(false);
+                setMsg('Date fields are invalid. Start date should be before end date. End date should not be in the past');
+                return;
+            }
     
             let userData = {...formState};
             userData = {
@@ -111,6 +118,7 @@ const CreateRule = () => {
                 setMsg('User Created Successfully.');
                 setFormState(
                     {
+                        ...formState,
                         name: "",
                         description: "",
                         priority: "",
@@ -119,11 +127,7 @@ const CreateRule = () => {
                         minAge: "",
                         maxAge: "",
                         timeFrom: "",
-                        timeTo: "",
-                        days: [],
-                        travelFrom: [],
-                        travelTo: [],
-                        occupationDeny: []
+                        timeTo: ""
                     }
                 );
                 setLoading(false);
@@ -314,6 +318,21 @@ const CreateRule = () => {
             </div>
         </div>
     );
+}
+
+const isDatesValid = (fromDate, toDate) => {
+    const fromDateArr = fromDate.split('-');
+    const fromDateObj = new Date(fromDateArr[0], fromDateArr[1] - 1, fromDateArr[2]);
+    
+    const toDateArr = toDate.split('-');
+    const toDateObj = new Date(toDateArr[0], toDateArr[1] - 1, toDateArr[2]);
+    const currDate = new Date();
+    
+    toDateObj.setHours(0, 0, 0, 0);
+    fromDateObj.setHours(0, 0, 0, 0);
+    currDate.setHours(0,0,0,0);
+
+    return (fromDateObj < toDateObj) && (currDate < toDateObj);
 }
  
 export default CreateRule;

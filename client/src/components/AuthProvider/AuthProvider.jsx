@@ -5,12 +5,22 @@ import { UserContext } from '../../helpers/userContext';
 import axios from 'axios';
 
 class AuthProvider extends Component {
-    constructor(props) {
-        super(props);
+    // constructor(props) {
+    //     super(props);
 
-        this.state = {
-            user: undefined
-        }
+    //     this.state = {
+    //         user: undefined
+    //     }
+    // }
+
+    setUser = (user) => {
+        console.log("User", user);
+        this.setState({ user});
+    }
+   
+    state = {
+        user: undefined,
+        setUser: this.setUser
     }
 
     componentDidMount() {
@@ -47,7 +57,7 @@ class AuthProvider extends Component {
         }
 
         return (
-            <UserContext.Provider value={this.state.user}>
+            <UserContext.Provider value={this.state}>
                 {this.props.children}
             </UserContext.Provider>
         );

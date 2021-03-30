@@ -20,7 +20,7 @@
     font-weight: bold;
 }
 
-.main input {
+.main input, .main select {
     margin: 10px 0;
     border-radius: 22px;
     border: none;
@@ -31,7 +31,7 @@
     transition: all 0.2s ease;
 }
 
-.main input:focus{
+.main input:focus, .main select:focus{
     outline: none;
     transform: scale(1.05);
 }

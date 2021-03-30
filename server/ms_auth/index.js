@@ -150,15 +150,13 @@ app.post('/forgotpassword', async (req, res) => {
         }
         else {
           Code.findOne({TC: req.user.id}, (err,data_c)=>{
-            if(data_c == null){
-              // res.status(400).send("EFTS Code not generated for this user\n"+data);                                              //If the user DOES NOT EXITS, then this message will be send as response.
+            if(data_c == null){                                         //If the user DOES NOT EXITS, then this message will be send as response.
               const result={
                 id : data.TC,
                 fname : data.FName,
                 sname : data.SName,
                 gender : data.Gender,
-                EFTScode : null,
-                QRCode : null
+                eftsCodes: []
               }
               res.status(200).json(result);
             }
@@ -168,8 +166,7 @@ app.post('/forgotpassword', async (req, res) => {
                 fname : data.FName,
                 sname : data.SName,
                 gender : data.Gender,
-                EFTScode : data_c.EFTScode,
-                QRCode : data_c.qrcode_image
+                eftsCodes: data_c.Codes
               }
               res.status(200).json(result);                                         //If the user exists, the Identity Number of the user is sent as respnse. 
             }

@@ -5,7 +5,7 @@ import { UserContext } from '../../helpers/userContext';
 
 const CreateEntry = () => {
 
-    const user = useContext(UserContext);
+    const {user} = useContext(UserContext);
 
     const [codes, setCodes] = useState(["EFTS-"]);
     const [isLoading, setIsLoading] = useState(false);
@@ -47,11 +47,12 @@ const CreateEntry = () => {
     const handleSubmit = () => {
 
         setIsLoading(true);
-        const filteredCodes = codes.filter((c) => c !== "");
+        setMsg('');
 
+        const filteredCodes = codes.filter((c) => c !== "");
         if (filteredCodes.length !== 0) {
             axios.post('http://localhost:5000/filiation', {
-                from: user.EFTScode,
+                from: user.id,
                 to: filteredCodes
             }).then((res) => {
                 setMsg('Participants added successfully');

@@ -64,8 +64,18 @@
 .main {
     display: flex; 
     flex-direction: column;
-    width: 35%;
+    width: 70%;
     margin: 20px auto;
+}
+
+.ttlContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ttlContainer label, .ttlContainer input {
+    text-align: center;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -78,6 +88,47 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+.codesTable {
+    width: min(800px, 100%);
+    margin: auto;
+}
+
+.codesRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    color: #ba1b08;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.codesRow .left {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.copy {
+    font-size: 12px;
+}
+
+.copy:hover {
+    cursor: pointer;
+}
+
+.alignCenter {
+    text-align: center;
+}
+
+@media only screen and (max-width: 700px) {
+    .codesRow {
+        display: block;
+        text-align: center;
+    }
 }
 
 /* For Tablets */

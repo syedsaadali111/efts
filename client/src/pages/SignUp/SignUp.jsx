@@ -47,6 +47,12 @@ const SignUp = () => {
             formState.password &&
             formState.password2
         ) {
+            if (!isDateValid(formState.dob)){
+                setMsg('Date value is invalid!');
+                setLoading(false);
+                return;
+            }
+
             if (formState.password === formState.password2) {
 
                 const userData = {...formState};
@@ -108,7 +114,15 @@ const SignUp = () => {
                     <label htmlFor="email">Email Address</label>
                     <input value={formState.email} onChange={e => handleChange(e)} id="email" name="email" placeholder="someone@example.com" />
                     <label htmlFor="occupation">Occupation</label>
-                    <input value={formState.occupation} onChange={e => handleChange(e)} id="occupation" name="occupation"/>
+                    <select value={formState.occupation} onChange={e => handleChange(e)} id="occupation" name="occupation">
+                        <option value="">&lt;choose&gt;</option>
+                        <option value="Front Line Hospital Employee">Front Line Hospital Employee</option>
+                        <option value="Police">Police</option>
+                        <option value="Military">Military</option>
+                        <option value="Paramilitary personnel">Paramilitary personnel</option>
+                        <option value="Civic worker">Civic worker</option>
+                        <option value="Emergency response workers">Emergency response workers</option>
+                    </select>
                     <label htmlFor="phone">Phone Number</label>
                     <div className={styles.phone}>
                         <label htmlFor="phone">+90</label>
@@ -124,6 +138,15 @@ const SignUp = () => {
             </div>
         </div>
     );
+}
+
+const isDateValid = (dateString) => {
+    const dateArr = dateString.split('-');
+    const dob = new Date(dateArr[0], dateArr[1] - 1, dateArr[2]);
+    const currDate = new Date();
+    dob.setHours(0, 0, 0, 0);
+    currDate.setHours(0, 0, 0, 0);
+    return dob <= currDate;
 }
  
 export default SignUp;
