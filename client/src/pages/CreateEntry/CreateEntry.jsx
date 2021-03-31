@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import styles from './CreateEntry.module.css';
 import axios from 'axios';
 import { UserContext } from '../../helpers/userContext';
+import QrReader from 'react-qr-reader';
 
 const CreateEntry = () => {
 
@@ -10,6 +11,7 @@ const CreateEntry = () => {
     const [codes, setCodes] = useState(["EFTS-"]);
     const [isLoading, setIsLoading] = useState(false);
     const [msg, setMsg] = useState('');
+    const [showScanner, setShowScanner] = useState(false);
 
     const handleChange = (e, idx) => {
 
@@ -71,21 +73,61 @@ const CreateEntry = () => {
         }
     }
 
+    const handleQrError = () => {
+        console.log("Scanner Error");
+    }
+
+    const handleQrScan = (data) => {
+        if(data){
+            console.log(data);
+            for(let i = 0; i < codes.length; i++) {
+                if (codes[i] === 'EFTS-' || codes[i]==='') {
+                    const newCodes = [...codes];
+                    newCodes[i] = data;
+                    setCodes(newCodes);
+                    setShowScanner(false);
+                    return;
+                }
+            }
+            const newCodes = [...codes, data];
+            setCodes(newCodes);
+            setShowScanner(false);
+        }
+    }
+    
+    const toggleScanner = () => {
+        setShowScanner(!showScanner);
+    }
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1>Meeting Someone?</h1>
             </div>
             <div className={styles.main}>
+                {
+                    showScanner ? (
+                        <div className={styles.qrContainer}>
+                            <QrReader
+                                delay={300}
+                                onError={handleQrError}
+                                onScan={(data) => handleQrScan(data)}
+                            />
+                        </div>
+                    ) : null
+                }
                 <div className={styles.addCodesDiv}>
+                    <h2>Enter or scan EFTS codes of other participants</h2>
                     <div className={styles.addCodesForm}>
-                        <h2>Enter EFTS codes of other participants</h2>
                         {codes.map((code, idx) => {
                             return (
                                 <input key={idx} placeholder="EFTS-XXXX-XXXX-XXXX" value={code} onChange={e => handleChange(e, idx)} />
                             )
                         })}
-                        <button className={styles.addMoreBtn} onClick={handleAdd}>+ Add More</button>
+                        <div className={styles.buttonContainer}>
+                            <button className={styles.addMoreBtn} onClick={handleAdd}>+ Add More</button>
+                            <button className={styles.addMoreBtn} onClick={toggleScanner}>{showScanner ? 'Cancel' : '+ Scan QR'}</button>
+                        </div>
                     </div>
                 </div>
                 <button onClick={handleSubmit} disable={isLoading.toString()}>SUBMIT</button>
