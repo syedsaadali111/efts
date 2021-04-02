@@ -5,6 +5,7 @@ const login_institute = require('./public_institute_logindb');
 const PublicInstitute = require('./public_institutedb');
 const p_institute_rule = require ('./public_institute_rulesdb'); 
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer');
 require('dotenv').config()
 const app = express()
 const cors = require("cors"); 
@@ -53,15 +54,46 @@ app.post('/signup',async (req,res)=>{
                     if(err){
                         console.log(err);
                     }else{
-                        res.status(200).send("Institute Created");
+                      sendEmail.then(val=>res.json({"msg": val,
+                                                    "created" : "Institute is Created"}))
 
                     }
                 })
               }
-              })
+            })
       }
   })
-  
+  const user = {id  :  req.body.email}
+  const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+  var link = "http://localhost:5004/verifyinstitute/"+access_token;
+
+  var sendEmail =  new Promise((resolve, reject)=>{
+
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL ,
+            pass: process.env.PASSWORD
+        }
+      });
+
+      let mailOptions = {
+        from: process.env.EMAIL , 
+        to: req.body.email, 
+        subject: "SignUp Confirmation",
+        html: link
+      };
+
+      transporter.sendMail(mailOptions, (err, data) => {
+        if (err) {
+            reject("Email is NOT SENT!!!!!")
+        } 
+        else{
+            resolve('Email IS Sent')
+        }      
+      });
+
+  })
   
 })
 
@@ -85,7 +117,19 @@ app.post('/forgotpassword', async (req, res) => {
 
 }) 
     
-    
+app.get('/verifyinstitute/:token',(req,res)=>{
+
+  const check = jwt.verify(req.params.token, process.env.ACCESS_TOKEN_SECRET)
+  login_institute.findOneAndUpdate({email:check.id},{active:true},(err,data)=>{
+    if(data.active){
+      res.status(200).json({"msg" : "Your Account is already verified"});
+    }
+    else{
+      res.status(200).json({"msg" : "Your account has been verrified"});
+    }
+  }) 
+
+})
 
 app.post('/login', async (req, res) => {    
     login_institute.findOne({email: req.body.email},  async  (err, data) => {
@@ -94,6 +138,9 @@ app.post('/login', async (req, res) => {
         } 
         else if (data== null){
             res.status(400).send("ID is unregistered");                                              //If the user DOES NOT EXITS, then this message will be send as response.
+        }
+        else if (data.active == false){
+          res.status(400).json({"msg" : "Your account is not active. Kindly check your email to verify"})
         }
         else {
           function replacer(key, value) {

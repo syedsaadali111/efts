@@ -6,7 +6,9 @@ const Citizens = require('./citizendb');
 const Code = require('./codedb');
 const jwt = require('jsonwebtoken')
 const axios = require('axios');
+const nodemailer = require('nodemailer');
 const cors = require('cors');
+
 require('dotenv').config()
 const app = express()
 
@@ -22,10 +24,12 @@ mongoose.connect(connectionURL, {
 .catch((err) => console.log(err)); //DB connection made. 
 
 app.post('/signup',async (req,res)=>{
+
   const hashedPassword = await bcrypt.hash(req.body.password, 10)
   Citizens.findOne({TC : req.body.TC},(err,data_first)=>{
       if(data_first != null){
         res.status(401).send("Data is already present")
+        return
       }
       else{
                 const result= new Citizens({
@@ -52,29 +56,77 @@ app.post('/signup',async (req,res)=>{
                       if(err){
                         res.status(500).send(err);
                       }else{
-                      
-                        //create citizen node in neo4j
+                        // create citizen node in neo4j
                       axios.post(('http://localhost:5000/citizen'), {
                         id: req.body.TC
                       }).then(() => {
-                        res.status(200).send("User Created");
+                        sendEmail.then(val=>(res.status(200).json({"info" : "User Created",
+                                                                  "msg" : val
+                                                                  })
+                                            )
+                                      );
+                        
                       }).catch( () => {
                           console.log("Neo4j error");
                       });
-
                     }
-                    })
+                  })
               }
 
 
-              })
+            })
+
+
       }
   })
-  
-  
+  const id_TC =  req.body.TC
+  const user = {id  :  id_TC}
+  const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+  var link = "http://localhost:5003/verifyuser/"+access_token;
+
+  var sendEmail =  new Promise((resolve, reject)=>{
+
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL ,
+            pass: process.env.PASSWORD
+        }
+      });
+
+      let mailOptions = {
+        from: process.env.EMAIL , 
+        to: req.body.email, 
+        subject: "SignUp Confirmation",
+        html: link
+      };
+
+      transporter.sendMail(mailOptions, (err, data) => {
+        if (err) {
+            reject("Email is NOT SENT!!!!!")
+        } 
+        else{
+            resolve('Email IS Sent')
+        }      
+      });
+
+  })
+ 
 })
 
+app.get('/verifyuser/:token',(req,res)=>{
 
+  const check = jwt.verify(req.params.token, process.env.ACCESS_TOKEN_SECRET)
+  login_user.findOneAndUpdate({id:check.id},{active:true},(err,data)=>{
+    if(data.active){
+      res.status(200).json({"msg" : "Your Account is already verified"});
+    }
+    else{
+      res.status(200).send({"msg" : "Your account has been verrified"});
+    }
+  }) 
+
+})
 
 app.post('/login', async (req, res) => {    
     login_user.findOne({id: req.body.id},  async  (err, data) => {
@@ -83,6 +135,9 @@ app.post('/login', async (req, res) => {
         } 
         else if (data== null){
             res.status(400).send("ID is unregistered");                                              //If the user DOES NOT EXITS, then this message will be send as response.
+        }
+        else if(data.active == false){
+          res.status(400).json({ "msg" :"Your account is not active. Kindly check your email to verify"})
         }
         else {
           function replacer(key, value) {
