@@ -141,7 +141,6 @@ app.post('/login', async (req, res) => {
           res.status(500).send(err);
         } 
         else if (data== null){
-          console.log("rerer");
           res.status(401).json({"msg" : "Invalid Credentials"}); //If the user DOES NOT EXITS, then this message will be send as response.
         }
         else {
