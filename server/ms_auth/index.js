@@ -25,66 +25,13 @@ mongoose.connect(connectionURL, {
 
 app.post('/signup',async (req,res)=>{
 
-  const hashedPassword = await bcrypt.hash(req.body.password, 10)
-  Citizens.findOne({TC : req.body.TC},(err,data_first)=>{
-      if(data_first != null){
-        res.status(401).send("Data is already present")
-        return
-      }
-      else{
-                const result= new Citizens({
-                TC : req.body.TC,
-                FName : req.body.fname,
-                SName : req.body.sname,
-                DOB : req.body.dob,
-                Gender : req.body.gender,
-                Email : req.body.email,
-                Occupation : req.body.occupation,
-                Phone : req.body.phone,
-                password : req.body.password
-              });
-              result.save((err,data)=>{
-                if(err){
-                  console.log(err);
-              }else{
-                  const new_login  = new login_user({
-                    id : req.body.TC,
-                    password : hashedPassword
-                  })
-                
-                    new_login.save((err,data_n)=>{
-                      if(err){
-                        res.status(500).send(err);
-                      }else{
-                        // create citizen node in neo4j
-                      axios.post(('http://localhost:5000/citizen'), {
-                        id: req.body.TC
-                      }).then(() => {
-                        sendEmail.then(val=>(res.status(200).json({"info" : "User Created",
-                                                                  "msg" : val
-                                                                  })
-                                            )
-                                      );
-                        
-                      }).catch( () => {
-                          console.log("Neo4j error");
-                      });
-                    }
-                  })
-              }
-
-
-            })
-
-
-      }
-  })
   const id_TC =  req.body.TC
   const user = {id  :  id_TC}
   const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
   var link = "http://localhost:5003/verifyuser/"+access_token;
 
-  var sendEmail =  new Promise((resolve, reject)=>{
+  function sendEmail() {
+    return new Promise((resolve, reject)=>{
 
     let transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -110,7 +57,64 @@ app.post('/signup',async (req,res)=>{
         }      
       });
 
-  })
+    })
+  }
+
+  const hashedPassword = await bcrypt.hash(req.body.password, 10)
+  Citizens.findOne({TC : req.body.TC},(err,data_first)=>{
+      if(data_first != null){
+        res.status(401).send("Data is already present");
+        return;
+      }
+      else{
+                const result= new Citizens({
+                TC : req.body.TC,
+                FName : req.body.fname,
+                SName : req.body.sname,
+                DOB : req.body.dob,
+                Gender : req.body.gender,
+                Email : req.body.email,
+                Occupation : req.body.occupation,
+                Phone : req.body.phone,
+                password : req.body.password
+              });
+              result.save((err,data)=>{
+                if(err){
+                  console.log(err);
+              }else{
+                const new_login  = new login_user({
+                  id : req.body.TC,
+                  password : hashedPassword
+                });
+              
+                new_login.save((err,data_n)=>{
+                  if(err){
+                    res.status(500).send(err);
+                  }else{
+                    // create citizen node in neo4j
+                  axios.post(('http://localhost:5000/citizen'), {
+                    id: req.body.TC
+                  }).then(() => {
+                    sendEmail().then(val=> {
+                      res.status(200).json({"info" : "User Created", "msg" : val})
+                    }).catch( err => {
+                      console.log("SMTP error");
+                      res.status(500).send(err);
+                    });
+                  }).catch( (err) => {
+                      console.log("Neo4j error");
+                      res.status(500).send(err);
+                  });
+                }
+                })
+              }
+
+
+            })
+
+
+      }
+  });
  
 })
 
@@ -132,42 +136,48 @@ app.post('/login', async (req, res) => {
     login_user.findOne({id: req.body.id},  async  (err, data) => {
         if (err) {
           res.status(500).send(err);
+          return;
         } 
-        else if (data== null){
-            res.status(400).send("ID is unregistered");                                              //If the user DOES NOT EXITS, then this message will be send as response.
+        if (data== null){ //If the user DOES NOT EXITS, then this message will be send as response.
+          res.status(401).json({"msg": "Invalid Credentials"});
+          return;
         }
-        else if(data.active == false){
-          res.status(400).json({ "msg" :"Your account is not active. Kindly check your email to verify"})
-        }
-        else {
-          function replacer(key, value) {
-            return value.password;    
+
+        function replacer(key, value) {
+          return value.password;    
         }
         const userStr = JSON.stringify(data, replacer);
         var output = userStr.replace(/['"]+/g, '')
-        
+
         try {
-                if(await bcrypt.compare(req.body.password, output, function(err, matches) {
-                    if (err)
-                      // res.json({id : err});
-                      res.status(400).json({"msg": "Invalid Credentials"});
-                    else if (matches){
-                      const username =  req.body.id
-                      const user = {id  :  username}
-                      const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-                      res.json({ id : username,
-                                access_token : access_token})
-                    }
-                    else
-                      // res.json({id : null});
-                      res.status(400).json({"msg": "Invalid Password"});
-                  }));
-              } catch {
-                res.status(500).send("Error")
+          if(await bcrypt.compare(req.body.password, output, function(err, matches) {
+            if (err){
+              res.status(401).json({"msg": "Invalid Credentials"});
+              return;
+            }
+            else if (matches){
+              if(data.active == false){
+                res.status(401).json({ "msg" :"Your account is not active. Kindly check your email to verify"});
+                return;
               }
-      
+              const username =  req.body.id
+              const user = {id  :  username}
+              const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+              res.json({ id : username,
+                        access_token : access_token})
+              return;
+            }
+            else {
+              res.status(401).json({"msg": "Invalid Credentials"});
+              return;
+            }
+          }));
+        } catch {
+          res.status(500).send("Error");
+          return;
         }
-      }); 
+
+    }); 
 
 })
 
