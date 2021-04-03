@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styles from './SignUp.module.css';
 import axios from 'axios';
-import {useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 const SignUp = () => {
 
@@ -21,8 +21,7 @@ const SignUp = () => {
     );
     const [msg,setMsg] = useState('');
     const [loading, setLoading] = useState(false);
-
-    const history = useHistory();
+    const [signUpSuccess, setSignUpSuccess] = useState(false);
 
     const handleChange = (e) => {
         setFormState( {
@@ -74,7 +73,7 @@ const SignUp = () => {
                         }
                     );
                     setLoading(false);
-                    history.push("/login");
+                    setSignUpSuccess(true);
                 }).catch( () => {
                     setMsg('A server error occured, try again in a while.');
                     setLoading(false);
@@ -122,6 +121,7 @@ const SignUp = () => {
                         <option value="Paramilitary personnel">Paramilitary personnel</option>
                         <option value="Civic worker">Civic worker</option>
                         <option value="Emergency response workers">Emergency response workers</option>
+                        <option value="Other">Other</option>
                     </select>
                     <label htmlFor="phone">Phone Number</label>
                     <div className={styles.phone}>
@@ -133,8 +133,21 @@ const SignUp = () => {
                     <label htmlFor="password2">Confirm Password</label>
                     <input value={formState.password2} onChange={e => handleChange(e)} type="password" id="password2" name="password2"/>
                     {msg && <p>{msg}</p>}
-                    <button disabled={loading} type="submit">Register</button>
+                    <button disabled={loading} type="submit">{loading ? 'Loading...' : 'Register'}</button>
                 </form>
+                { signUpSuccess && (
+                    <div className={styles.modal}>
+                        <div className={styles.content}>
+                            <h3>
+                                A confirmation link has been sent to you on your email. You need to verify
+                                your email by clicking on the link before logging in.
+                            </h3>
+                            <Link to="/login">
+                                <button>Ok</button>
+                            </Link>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

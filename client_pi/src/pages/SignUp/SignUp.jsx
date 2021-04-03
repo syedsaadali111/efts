@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styles from './SignUp.module.css';
 import axios from 'axios';
-import {useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 const SignUp = () => {
 
@@ -25,8 +25,9 @@ const SignUp = () => {
     );
     const [msg,setMsg] = useState('');
     const [loading, setLoading] = useState(false);
+    const [registerSuccess, setRegisterSuccess] = useState(false);
 
-    const history = useHistory();
+    // const history = useHistory();
 
     const handleChange = (e) => {
         setFormState( {
@@ -80,7 +81,7 @@ const SignUp = () => {
                     }
                 );
                 setLoading(false);
-                history.push("/login");
+                setRegisterSuccess(true);
             }).catch( () => {
                 setMsg('Email is already in use.');
                 setLoading(false);
@@ -132,8 +133,21 @@ const SignUp = () => {
                     <label htmlFor="password2">Confirm Password</label>
                     <input value={formState.password2} onChange={e => handleChange(e)} type="password" id="password2" name="password2"/>
                     {msg && <p>{msg}</p>}
-                    <button disabled={loading} type="submit">Register</button>
+                    <button disabled={loading} type="submit">{loading ? 'Loading...' : 'Register'}</button>
                 </form>
+                { registerSuccess && (
+                    <div className={styles.modal}>
+                        <div className={styles.content}>
+                            <h3>
+                                A confirmation link has been sent to you on your email. You need to verify
+                                your email by clicking on the link before logging in.
+                            </h3>
+                            <Link to="/login">
+                                <button>Ok</button>
+                            </Link>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

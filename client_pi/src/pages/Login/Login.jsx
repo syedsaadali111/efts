@@ -22,8 +22,11 @@ const Login = () => {
         axios.post('http://localhost:5004/login', formValues).then( (res) => {
             localStorage.setItem('jwt', res.data.access_token);
             history.push('/');
-        }).catch( () => {
-            setMsg("Invalid Credentials");
+        }).catch( (err) => {
+            if(err.response)
+                setMsg(err.response.data.msg);
+            else
+                setMsg("Unknown Error");
             setLoading(false);
         })
     }
