@@ -25,6 +25,42 @@ mongoose.connect(connectionURL, {
 
 
 app.post('/signup',async (req,res)=>{
+
+  const user = {id  :  req.body.email}
+  const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+  var link = "http://localhost:5004/verifyinstitute/"+access_token;
+
+  function sendEmail() {
+
+    return new Promise((resolve, reject)=>{
+
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL ,
+            pass: process.env.PASSWORD
+        }
+      });
+
+      let mailOptions = {
+        from: process.env.EMAIL , 
+        to: req.body.email, 
+        subject: "SignUp Confirmation",
+        html: link
+      };
+
+      transporter.sendMail(mailOptions, (err, data) => {
+        if (err) {
+            reject("Email is NOT SENT!!!!!")
+        } 
+        else{
+            resolve('Email IS Sent')
+        }      
+      });
+
+    })
+  }
+
   const PhashedPassword = await bcrypt.hash(req.body.password, 10)
   PublicInstitute.findOne({email : req.body.email},(err,data_first)=>{
       if(data_first != null){
@@ -54,7 +90,7 @@ app.post('/signup',async (req,res)=>{
                     if(err){
                         console.log(err);
                     }else{
-                      sendEmail.then(val=>res.json({"msg": val,
+                      sendEmail().then(val=>res.json({"msg": val,
                                                     "created" : "Institute is Created"}))
 
                     }
@@ -62,39 +98,7 @@ app.post('/signup',async (req,res)=>{
               }
             })
       }
-  })
-  const user = {id  :  req.body.email}
-  const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-  var link = "http://localhost:5004/verifyinstitute/"+access_token;
-
-  var sendEmail =  new Promise((resolve, reject)=>{
-
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL ,
-            pass: process.env.PASSWORD
-        }
-      });
-
-      let mailOptions = {
-        from: process.env.EMAIL , 
-        to: req.body.email, 
-        subject: "SignUp Confirmation",
-        html: link
-      };
-
-      transporter.sendMail(mailOptions, (err, data) => {
-        if (err) {
-            reject("Email is NOT SENT!!!!!")
-        } 
-        else{
-            resolve('Email IS Sent')
-        }      
-      });
-
-  })
-  
+  });
 })
 
 app.post('/forgotpassword', async (req, res) => {
@@ -137,10 +141,8 @@ app.post('/login', async (req, res) => {
           res.status(500).send(err);
         } 
         else if (data== null){
-            res.status(400).send("ID is unregistered");                                              //If the user DOES NOT EXITS, then this message will be send as response.
-        }
-        else if (data.active == false){
-          res.status(400).json({"msg" : "Your account is not active. Kindly check your email to verify"})
+          console.log("rerer");
+          res.status(401).json({"msg" : "Invalid Credentials"}); //If the user DOES NOT EXITS, then this message will be send as response.
         }
         else {
           function replacer(key, value) {
@@ -155,6 +157,10 @@ app.post('/login', async (req, res) => {
                     if (err)
                       res.json({email : err});
                     else if (matches){
+                      if (data.active == false){
+                        res.status(401).json({"msg" : "Your account is not active. Kindly check your email to verify"});
+                        return;
+                      }
                       const username =  req.body.email
                       const user = {email  :  username,
                                     rule_issuer : data_p.rule_issuer,
@@ -165,7 +171,7 @@ app.post('/login', async (req, res) => {
                       res.json({access_token : access_token})
                     }
                     else
-                    res.sendStatus(500);
+                      res.status(401).json({"msg" : "Invalid Credentials"});
                 }));
               } catch {
                 res.status(500).send("Error")
