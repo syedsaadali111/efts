@@ -99,7 +99,7 @@ app.post('/login', (req,res)=>{
 })
 
 app.post('/adduser',authenticateToken,async(req,res)=>{
-  if(req.user.type == "superuser"){
+  if(req.user.type === "superuser"){
     const hashedPassword_new_user = await bcrypt.hash(req.body.password, 10)
   
   admin_user.findOne({username : req.body.username},(err,data_user)=>{
@@ -131,7 +131,7 @@ app.post('/adduser',authenticateToken,async(req,res)=>{
 })
 
 app.post('/deleteuser', authenticateToken,(req,res)=>{
-  if(req.user.type == "superuser"){
+  if(req.user.type === "superuser"){
     if(req.body.username == "root"){
       res.status(400).send(req.body.username + " cannot be deleted !!Warning!!")
 
@@ -156,7 +156,7 @@ else{
 })
 
 app.get('/getallpending',authenticateToken,(req,res)=>{
-  if(req.user.type == "superuser"){
+  if(req.user.type === "superuser"){
     p_login.find({approved : false , active : true}, async (err,data)=>{
       if(data.length == 0){
         res.status(400).send("No Pending Requests")
@@ -170,7 +170,30 @@ app.get('/getallpending',authenticateToken,(req,res)=>{
       }
     })
   }
+})
 
+app.post('/makedecision',authenticateToken,(req,res)=>{
+  if(req.user.type === "superuser"){
+      if(req.body.decision == true){
+        p_login.findOneAndUpdate({email : req.body.email},{approved : req.body.decision},(err,data_a)=>{
+          if(err){
+            res.status(400).send(err)
+            return
+          }
+          else{
+            res.status(400).send("Approved")
+            return
+          }
+        })
+      }
+      else {
+          p_login.findOneAndDelete({email : req.body.email}).then(
+            p_insts.findOneAndDelete({email : req.body.email}).then(
+              res.status(200).send("Request Denied and Deleted")
+            )
+          )
+      }
+  }
 })
 
 
