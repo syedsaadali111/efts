@@ -96,9 +96,62 @@ app.post('/login', (req,res)=>{
     })
 })
 
+app.post('/adduser',authenticateToken,async(req,res)=>{
+  if(req.user.type == "superuser"){
+    const hashedPassword_new_user = await bcrypt.hash(req.body.password, 10)
+  
+  admin_user.findOne({username : req.body.username},(err,data_user)=>{
+    if(data_user){
+      res.status(400).send("This user is already Exists")
+    }
+    else{
+        const new_user= new admin_user({
+        username : req.body.username,
+        password :  hashedPassword_new_user,
+        type : req.body.type
+      });
+      new_user.save((err,data)=>{
+          if(err){
+              console.log(err)
+          }
+          else{
+              res.status(200).send(data);
+          }
+      })
+    }
+  });
+  }
+  else {
+   res.status(400).send("User is not allowed to create another user.")
+  }
+  
 
+})
 
+app.post('/deleteuser', authenticateToken,(req,res)=>{
+  if(req.user.type == "superuser"){
+    if(req.body.username == "root"){
+      res.status(400).send(req.body.username + " cannot be deleted !!Warning!!")
 
+    }
+    else{
+  admin_user.findOneAndDelete({username : req.body.username},(err,data)=>{
+    if(err){
+      res.status(400).send(err)
+    }
+    else if(data == null){
+      res.status(400).send(req.body.username + " User does not exits")
+    }
+    else{
+      res.status(200).send(data.username + " User is deleted")
+    }
+  })
+}
+}
+else{
+  res.status(400).send("User is not allowed to delete another user.")
+}
+})
 
 
 
