@@ -1,6 +1,8 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
 const admin_user = require('./adminlogindb');
+const p_login = require('./public_institute_logindb')
+const p_insts = require('./public_institutedb')
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken')
 const cors = require('cors');
@@ -153,7 +155,23 @@ else{
 }
 })
 
+app.get('/getallpending',authenticateToken,(req,res)=>{
+  if(req.user.type == "superuser"){
+    p_login.find({approved : false , active : true}, async (err,data)=>{
+      if(data.length == 0){
+        res.status(400).send("No Pending Requests")
+      }
+      else{
+        const Public_Institute_promise = data.map(async x => {
+          return (p_insts.findOne({"email": x.email }).exec())
+      });
+      const p_institutes = await Promise.all(Public_Institute_promise);
+      res.status(200).send(p_institutes)
+      }
+    })
+  }
 
+})
 
 
 function authenticateToken(req, res, next) {
