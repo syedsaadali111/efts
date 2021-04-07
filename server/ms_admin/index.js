@@ -24,7 +24,7 @@ mongoose.connect(connectionURL, {
 .catch((err) => console.log(err)); //DB connection made. 
 
 
-app.post('/signup',async (req,res)=>{
+app.post('/createnewuser',async (req,res)=>{
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
     admin_user.findOne({username : req.body.username},(err,a_data)=>{
         if(a_data != null){
@@ -72,10 +72,6 @@ app.post('/login', (req,res)=>{
               return;
             }
             else if (matches){
-              if(data.active == false){
-                res.status(401).json({ "msg" :"Your account is not active. Kindly check your email to verify"});
-                return;
-              }
               const user = {id  :  req.body.username,
                             type : data.type}
               const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
