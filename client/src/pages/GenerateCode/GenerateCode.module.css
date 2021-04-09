@@ -40,6 +40,7 @@
 
 .main button:hover{
     cursor: pointer;
+    background-color: #801105;
 }
 
 .main button:focus{
@@ -102,8 +103,31 @@ input[type=number] {
     margin-bottom: 20px;
     color: #ba1b08;
     background-color: white;
-    padding: 10px;
+    padding: 10px 30px;
     border-radius: 10px;
+    font-weight: bolder;
+}
+
+.codesRow h2 {
+    margin-bottom: 10px;
+}
+
+.codesRow p {
+    font-size: 14px;
+    color: #ba1a08a6;
+}
+
+.codesRow button {
+    width: fit-content;
+    font-size: 12px;
+    padding: 8px;
+    margin: 0px;
+    margin-right: 10px;
+    border-radius: 10px;
+}
+
+.codesRow button:hover {
+    cursor: pointer;
 }
 
 .codesRow .left {

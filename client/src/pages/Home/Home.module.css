@@ -20,6 +20,7 @@
 
 .main button:hover{
     cursor: pointer;
+    background-color: #801105;
 }
 
 .main button:focus{

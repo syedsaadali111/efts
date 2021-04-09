@@ -46,6 +46,25 @@ const GenerateCode = () => {
         });
     }
 
+    const shareCode = (code) => {
+        if (!navigator.share)
+            return setError('Sharing not supported by browser');
+        navigator.share({
+          title: 'YOUR EFTS CODE',
+          text: 'Your EFTS Code : ' + code ,
+          url: 'eftsCode'
+        })
+        .then( _ => console.log('Your code was shared.'))
+        .catch((e) => {
+            setError("There was an error while sharing your efts code. Try again.");
+            setLoading(false);
+        });
+    }
+    const daysBetween = (expDate) => {
+        let days = Math.floor((new Date(expDate).getTime() - Date.now()) / (1000 * 3600 * 24));
+        return days;
+    }    
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
@@ -69,8 +88,13 @@ const GenerateCode = () => {
                             return (
                                 <div className={styles.codesRow} key={code.EFTScode}>
                                     <div>
-                                        <h2>{code.EFTScode} <span className={styles.copy} onClick={() => {navigator.clipboard.writeText(code)}}>Copy</span></h2>
+                                        <h2>
+                                            {code.EFTScode} 
+                                        </h2>
+                                        <button onClick={() => {navigator.clipboard.writeText(code.EFTScode)}}>Copy</button>
+                                        <button onClick={() => shareCode(code.EFTScode)}>Share</button>
                                         <p>Expires at: {formatDate(code.expirationDate)}</p>
+                                        <p>Remaining days: {daysBetween(code.expirationDate)}</p>
                                     </div>
                                     <img style={{ "width": "150px", "height": "150px" }} alt="QR Code" src={code.qrcode_image} />
                                 </div>
