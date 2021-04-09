@@ -47,6 +47,8 @@ const GenerateCode = () => {
     }
 
     const shareCode = (code) => {
+        if (!navigator.share)
+            return setError('Sharing not supported by browser');
         navigator.share({
           title: 'YOUR EFTS CODE',
           text: 'Your EFTS Code : ' + code ,
@@ -89,7 +91,7 @@ const GenerateCode = () => {
                                         <h2>
                                             {code.EFTScode} 
                                         </h2>
-                                        <button onClick={() => {navigator.clipboard.writeText(code)}}>Copy</button>
+                                        <button onClick={() => {navigator.clipboard.writeText(code.EFTScode)}}>Copy</button>
                                         <button onClick={() => shareCode(code.EFTScode)}>Share</button>
                                         <p>Expires at: {formatDate(code.expirationDate)}</p>
                                         <p>Remaining days: {daysBetween(code.expirationDate)}</p>
