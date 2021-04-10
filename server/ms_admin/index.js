@@ -25,6 +25,7 @@ mongoose.connect(connectionURL, {
 
 
 app.post('/createnewuser',async (req,res)=>{
+
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
     admin_user.findOne({username : req.body.username},(err,a_data)=>{
         if(a_data != null){
@@ -46,6 +47,7 @@ app.post('/createnewuser',async (req,res)=>{
               })
             }
     })
+    
   
 })
 
@@ -152,7 +154,6 @@ else{
 })
 
 app.get('/getallpending',authenticateToken,(req,res)=>{
-  if(req.user.type === "superuser"){
     p_login.find({approved : false , active : true}, async (err,data)=>{
       if(data.length == 0){
         res.status(400).send("No Pending Requests")
@@ -165,11 +166,10 @@ app.get('/getallpending',authenticateToken,(req,res)=>{
       res.status(200).send(p_institutes)
       }
     })
-  }
+  
 })
 
 app.post('/makedecision',authenticateToken,(req,res)=>{
-  if(req.user.type === "superuser"){
       if(req.body.decision == true){
         p_login.findOneAndUpdate({email : req.body.email},{approved : req.body.decision},(err,data_a)=>{
           if(err){
@@ -189,9 +189,13 @@ app.post('/makedecision',authenticateToken,(req,res)=>{
             )
           )
       }
-  }
+  
 })
 
+app.get('/getuser',authenticateToken,(req,res)=>{
+  res.status(200).send({username : req.user.id,
+                        type: req.user.type})
+})
 
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization']
@@ -211,3 +215,4 @@ const PORT = 5005;
   app.listen(PORT, () => {
       console.log(`Running on port number ${PORT}`);
   });
+
