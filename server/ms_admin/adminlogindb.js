@@ -3,7 +3,10 @@ var mongoose = require('mongoose');
 const loginSchema = mongoose.Schema({
   username: String,
   password: String,
-  type : String 
+  type : {
+    type : String,
+    default : "other"
+  }
 });
 
 const login_user = mongoose.model('adminlogins', loginSchema);

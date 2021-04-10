@@ -107,8 +107,7 @@ app.post('/adduser',authenticateToken,async(req,res)=>{
     else{
         const new_user= new admin_user({
         username : req.body.username,
-        password :  hashedPassword_new_user,
-        type : req.body.type
+        password :  hashedPassword_new_user
       });
       new_user.save((err,data)=>{
           if(err){
