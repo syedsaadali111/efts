@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import styles from './CreateUser.module.css';
 import axios from 'axios';
 import { getJWT } from '../../helpers/jwt';
+import { UserContext } from '../../helpers/userContext';
 
 const CreateUser = () => {
 
@@ -23,6 +24,8 @@ const CreateUser = () => {
             [e.target.name]: e.target.value
         });
     }
+    
+    const {user} = useContext(UserContext);
 
     const handleSubmit = (e) => {
         setLoading(true);
@@ -78,27 +81,31 @@ const CreateUser = () => {
                 <h1>Administrators</h1>
             </div>
             <div className={styles.main}>
-                <h2>Create a new user with administrator privileges</h2>
-                <form onSubmit={(e) => handleSubmit(e)}>
-                    <label htmlFor="username">Username</label>
-                    <input value={formState.username} onChange={e => handleChange(e)} id="username" name="username" />
-                    <label htmlFor="password">Password</label>
-                    <input value={formState.password} onChange={e => handleChange(e)} type="password" id="password" name="password"/>
-                    <label htmlFor="password2">Confirm Password</label>
-                    <input value={formState.password2} onChange={e => handleChange(e)} type="password" id="password2" name="password2"/>
-                    {msg && <p>{msg}</p>}
-                    <button disabled={loading} type="submit">{loading ? 'Loading...' : 'Register'}</button>
-                </form>
-                { signUpSuccess && (
-                    <div className={styles.modal}>
-                        <div className={styles.content}>
-                            <h3>
-                                User created with administrator previledges with username '{tempUsername}'
-                            </h3>
-                            <button onClick={ () => setSignUpSuccess(false)}>Ok</button>
+                {user.type === 'superuser' ?
+                <>
+                    <h2>Create a new user with administrator privileges</h2>
+                    <form onSubmit={(e) => handleSubmit(e)}>
+                        <label htmlFor="username">Username</label>
+                        <input value={formState.username} onChange={e => handleChange(e)} id="username" name="username" />
+                        <label htmlFor="password">Password</label>
+                        <input value={formState.password} onChange={e => handleChange(e)} type="password" id="password" name="password"/>
+                        <label htmlFor="password2">Confirm Password</label>
+                        <input value={formState.password2} onChange={e => handleChange(e)} type="password" id="password2" name="password2"/>
+                        {msg && <p>{msg}</p>}
+                        <button disabled={loading} type="submit">{loading ? 'Loading...' : 'Register'}</button>
+                    </form>
+                    { signUpSuccess && (
+                        <div className={styles.modal}>
+                            <div className={styles.content}>
+                                <h3>
+                                    User created with administrator previledges with username '{tempUsername}'
+                                </h3>
+                                <button onClick={ () => setSignUpSuccess(false)}>Ok</button>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </> :
+                <h2>User is not allowed to create new admin accounts.</h2>}
             </div>
         </div>
     );
