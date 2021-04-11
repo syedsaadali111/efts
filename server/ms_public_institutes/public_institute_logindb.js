@@ -6,6 +6,10 @@ const login_inst = mongoose.Schema({
   active :{
     type : Boolean,
     default : false
+  },
+  approved :{
+    type : Boolean,
+    default : false
   }
 });
 

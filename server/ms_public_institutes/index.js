@@ -160,6 +160,11 @@ app.post('/login', async (req, res) => {
                         res.status(401).json({"msg" : "Your account is not active. Kindly check your email to verify"});
                         return;
                       }
+
+                      if (!data.approved) {
+                        res.status(401).json({"msg": "Your account request is being evaluated by system administrators"});
+                        return;
+                      }
                       const username =  req.body.email
                       const user = {email  :  username,
                                     rule_issuer : data_p.rule_issuer,

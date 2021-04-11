@@ -1,0 +1,22 @@
+.main h2 {
+    text-align: center; 
+    margin-bottom: 40px;
+}
+
+.container{
+    display: flex; 
+    flex-direction: column;
+    width: 100%;
+}
+
+.header {
+    background-color: #7b3229;
+    text-align: center;
+}
+
+.main {
+    display: flex; 
+    flex-direction: column;
+    width: 70%;
+    margin: 20px auto;
+}

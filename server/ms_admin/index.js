@@ -102,7 +102,7 @@ app.post('/adduser',authenticateToken,async(req,res)=>{
   
   admin_user.findOne({username : req.body.username},(err,data_user)=>{
     if(data_user){
-      res.status(400).send("This user is already Exists")
+      res.status(400).json({msg: "Username is already in use" })
     }
     else{
         const new_user= new admin_user({
@@ -121,10 +121,8 @@ app.post('/adduser',authenticateToken,async(req,res)=>{
   });
   }
   else {
-   res.status(400).send("User is not allowed to create another user.")
+   res.status(400).json({msg: "Only super users can create new admin users" });
   }
-  
-
 })
 
 app.post('/deleteuser', authenticateToken,(req,res)=>{
