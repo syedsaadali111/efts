@@ -174,7 +174,7 @@ app.post('/makedecision',authenticateToken,(req,res)=>{
             return
           }
           else{
-            res.status(400).send("Approved")
+            res.status(200).send("Approved")
             return
           }
         })
