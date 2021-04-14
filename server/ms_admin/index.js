@@ -153,7 +153,7 @@ else{
 app.get('/getallpending',authenticateToken,(req,res)=>{
     p_login.find({approved : false , active : true}, async (err,data)=>{
       if(data.length == 0){
-        res.status(400).send("No Pending Requests")
+        res.status(200).send([]);
       }
       else{
         const Public_Institute_promise = data.map(async x => {
