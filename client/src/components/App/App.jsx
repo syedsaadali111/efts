@@ -6,6 +6,7 @@ import Login from '../../pages/Login/Login';
 import AuthProvider from '../../components/AuthProvider/AuthProvider';
 import Home from '../../pages/Home/Home';
 import SignUp from '../../pages/SignUp/SignUp';
+import Navbar from '../../components/Navbar/Navbar';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <SignUp />
         </Route>
         <AuthProvider>
+          <Navbar></Navbar>
           <Route exact path="/">
             <Home/>
           </Route>
