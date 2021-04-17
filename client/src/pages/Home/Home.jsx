@@ -13,10 +13,10 @@ const Home = () => {
     }
 
     const user = useContext(UserContext);
-
+    
     return (
         <div className={styles.main}>
-            <h1>{user.name}</h1>
+            <h1>{user.user.fname} {user.user.sname}</h1>
             <Link to='/filiation'>Contact Tracing</Link>
             <Link to='/generate'>Your EFTS codes</Link>
             <button onClick={handleLogout}>Logout</button>
