@@ -13,12 +13,11 @@ const Home = () => {
         localStorage.removeItem('jwt');
         history.push('/login');
     }
-
+    
     const calculateAge = (dob) => {
         let age = Math.floor((new Date(Date.now()).getFullYear() - new Date(dob).getFullYear()));
         return age;
     }
-
 
     return (
         <div className={styles.container}>
