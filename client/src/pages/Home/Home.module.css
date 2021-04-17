@@ -1,6 +1,23 @@
-.main a, .main button {
-    width: min(250px, 100%);
-    margin: 20px;
+.header {
+    background-color: #7b3229;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+}
+
+.main {
+    width: 40%;
+    margin: 20px auto;
+}
+
+.container button {
+    width: 100%;
+    margin: 20px auto;
     border-radius: 30px;
     padding: 20px;
     background-color: #ba1b08;
@@ -9,24 +26,29 @@
     font-size: 18px;
     border: none;
     font-family: 'Montserrat', sans-serif;
-    text-align: center;
-    text-decoration: none;
 }
 
-.main {
-    display: flex;
-    flex-direction: column;
-}
-
-.main button:hover{
+.container button:hover {
     cursor: pointer;
-    background-color: #801105;
 }
 
-.main button:focus{
+.container button:focus{
     outline: none;
 }
 
-a {
-    width: fit-content;
+.profile {
+    text-align: center;
+    background-color: white;
+    border-radius: 30px;
+    width: 100%;    
+    color: #ba1b08;
+    font-weight: bold;
+    padding: 10px 25px;
+    font-size: 18px;
 }
+
+.profile span {
+    color: #585858;
+    padding-right: 10px;
+}
+
