@@ -17,8 +17,8 @@ mongoose.connect(connectionURL, {
 .catch((err) => console.log(err)); //DB connection made.
 
 
-
-const neo_uri = 'neo4j://18.216.10.216:7687';
+//http://3.136.62.151:7474/browser/
+const neo_uri = 'neo4j://3.136.62.151:7687';
 const driver = neo4j.driver(neo_uri, neo4j.auth.basic('neo4j', 'efts'));
 
 
@@ -112,8 +112,9 @@ app.post('/filiation',async (req, res) => {
         const promises = TC_array.map( async id => {
             const res = await tx.run('MATCH (c1:Citizen {id: $from}), (c2:Citizen {id: $to})'
                             + 'MERGE (c1)-[r:MET]-(c2)'
-                            + 'SET r.timestamp = timestamp()'
-                            + 'RETURN c1.id, c2.id', {from: req.body.from, to: id});
+                            + 'SET r.duration = toString($duration), r.timestamp = timestamp(), r.outdoors = toBoolean($outdoors) '
+                            + 'RETURN c1.id, c2.id'
+                            , {from: req.body.from, to: id, duration: req.body.duration, outdoors: req.body.outdoors});
             return res;
         })
 
@@ -134,6 +135,7 @@ app.post('/filiation',async (req, res) => {
             createdRelations: result
         });
     }).catch(error => {
+        console.log(error);
         res.status(400).json({msg: "Relationship Creation Failed. Check the request body params." });
     }).then( () => {
         session.close();

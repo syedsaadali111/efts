@@ -20,7 +20,7 @@
     transition: all 0.2s ease;
 }
 
-.main input:focus{
+.main input:focus, .main select:focus{
     outline: none;
     transform: scale(1.05);
 }
@@ -61,6 +61,7 @@
 .main {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     width: 70%;
     margin: 20px auto;
 }
@@ -104,6 +105,21 @@
 .buttonContainer {
     display: flex;
     justify-content: space-evenly;
+}
+
+.outdoors, .duration {
+    align-self: center;
+}
+
+.duration select {
+    margin: 10px 0;
+    border-radius: 10px;
+    border: none;
+    padding: 7px;
+    color: #793027;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s ease;
 }
 
 /* For Tablets */
