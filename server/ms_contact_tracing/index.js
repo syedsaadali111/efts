@@ -71,6 +71,130 @@ app.post('/citizen', (req, res) => {
 //     });
 // });
 
+app.get('/calculate', (req, res) => {
+
+    const subjectId = req.query.id;
+    console.log(subjectId);
+
+    //TODO: check if person is positive
+
+    const session = driver.session();
+
+    const readTxPromise = session.readTransaction(async tx => {
+        const result = tx.run('MATCH p=allShortestPaths((:Citizen {id: toInteger($id)})-[:MET*1..4]-(c:Citizen)) ' +
+                                'WHERE c.id <> toInteger($id) ' +
+                                'RETURN c, relationships(p) AS r ', {id: subjectId});
+        return result;
+    });
+
+    readTxPromise.then(async (result) => {
+        const records = result.records.map((r) => {
+            const relationship = r.get('r')[0].properties;
+            relationship.timestamp = parseInt(relationship.timestamp.toString());
+            return {
+                citizenId: parseInt(r.get('c').properties.id.toString()),
+                relationship: relationship,
+                degreeOfContact: r.get('r').length
+            }
+        });
+        console.log('RECORDS', records);
+
+        //prepare id array for mongoDB query
+        const ids = [...new Set([...records.map( r => r.citizenId)])];
+
+        //query mongoDB for postive citizens
+        const positives = await eftsCodes.find({"TC": {"$in": ids}, "Status": true});
+        const positiveIds = positives.map( p => p.TC);
+
+        //filter neo4j results to include contacts with positive people
+        const positiveRecords = positiveIds.map( id => {
+            const recordsForId = records.filter(r => r.citizenId === id);
+            const singularRecord = recordsForId.reduce((prev, curr) => { //get latest contact
+                return prev.relationship && (prev.relationship.timestamp > curr.relationship.timestamp) ? prev : curr 
+            }, Number.NEGATIVE_INFINITY);
+            return singularRecord;
+        });
+        console.log("Positive Records: ", positiveRecords);
+
+        const riskFactors = positiveRecords.map( record => {
+            //TODO: get mf and rl dynamically
+
+            //Factor 1, number of days
+            const daysMf = 4;
+            const daysRl = [10, 8, 6, 3, 1];
+            
+            const now = new Date().getTime();
+            const daysPast = (now - record.relationship.timestamp) / (3600 * 24 * 1000);
+
+            let daysRf;
+            if (daysPast <= 3)
+                daysRf = daysRl[0] * daysMf;
+            else if (daysPast <= 6)
+                daysRf = daysRl[1] * daysMf;
+            else if (daysPast <= 10)
+                daysRf = daysRl[2] * daysMf;
+            else if (daysPast <= 14)
+                daysRf = daysRl[3] * daysMf;
+            else
+                daysRf = daysRl[4] * daysMf;
+
+            //Factor 2, indoors/outdoors
+            const outdoorsMf = 2;
+            const outdoorsRl = [8, 6];
+            const outdoorsRf = record.relationship.outdoors ? outdoorsMf * outdoorsRl[1] : outdoorsMf * outdoorsRl[0];
+
+            //Factor 3, duration
+            const durationMf = 1;
+            const durationRl = [10, 6, 3];
+
+            let durationRf = durationMf * durationRl[1]; //default to mid
+
+            switch(record.relationship.duration) {
+                case 'high':
+                    durationRf = durationRl[0] * durationMf;
+                    break;
+                case 'mid':
+                    durationRf = durationRl[1] * durationMf;
+                    break;
+                case 'low':
+                    durationRf = durationRl[2] * durationMf;
+                    break;
+            }
+
+            //Factor 4, degree of contact
+            const degreeMf = 5;
+            const degreeRl = [10, 6, 3, 1];
+            const degreeRf = degreeMf * degreeRl[record.degreeOfContact - 1];
+
+            const maxValue = daysMf * Math.max(...daysRl) +
+                            outdoorsMf * Math.max(...outdoorsRl) +
+                            durationMf * Math.max(...durationRl) +
+                            degreeMf * Math.max(...degreeRl);
+                
+            return {
+                riskFactor: (daysRf + outdoorsRf + durationRf + degreeRf) / maxValue,
+                details: {
+                    daysPast: Math.floor(daysPast),
+                    duration: record.relationship.duration,
+                    degreeOfContact: record.degreeOfContact,
+                    outdoors: record.relationship.outdoors
+                }
+            }
+        });
+        console.log(riskFactors);
+
+        const maxRiskFactor = riskFactors.reduce( (prev, curr) => {
+            return prev.riskFactor && (prev.riskFactor > curr.riskFactor) ? prev : curr;
+        }, Number.NEGATIVE_INFINITY);
+
+        res.send(maxRiskFactor);
+        session.close();
+    }).catch( (e) => {
+        console.log(e);
+        res.status(500).json({msg: "Internal Server Error. Try again."})
+    });
+});
+
 app.post('/filiation',async (req, res) => {
     
     let flagMsg = null;
