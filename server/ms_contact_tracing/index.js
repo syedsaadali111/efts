@@ -3,6 +3,7 @@ const express = require('express');
 const neo4j = require('neo4j-driver');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const parameters = require('./parameters');
 
 const app = express();
 app.use(express.json());
@@ -71,12 +72,23 @@ app.post('/citizen', (req, res) => {
 //     });
 // });
 
-app.get('/calculate', (req, res) => {
+app.get('/calculate', async (req, res) => {
 
     const subjectId = req.query.id;
     console.log(subjectId);
 
-    //TODO: check if person is positive
+    //check if person is positive
+    const citizen = await eftsCodes.findOne({"TC": subjectId});
+    
+    if(!citizen) {
+        res.status(500).json({msg: 'Cannot find citizen data in the database'});
+        return;
+    }
+
+    if (citizen?.Status) {
+        res.json({isPositive: true});
+        return;
+    }
 
     const session = driver.session();
 
@@ -99,11 +111,23 @@ app.get('/calculate', (req, res) => {
         });
         console.log('RECORDS', records);
 
+        //return risk factor of 0 if no contacts
+        if(!records.length) {
+            res.json({riskFactor: 0, msg: 'No contacts found for this citizen'});
+            return;
+        }
+
         //prepare id array for mongoDB query
         const ids = [...new Set([...records.map( r => r.citizenId)])];
 
         //query mongoDB for postive citizens
         const positives = await eftsCodes.find({"TC": {"$in": ids}, "Status": true});
+        
+        if(!positives.length) {
+            res.json({riskFactor: 0, msg: 'No potentially risky contacts found for this citizen'});
+            return;
+        }
+
         const positiveIds = positives.map( p => p.TC);
 
         //filter neo4j results to include contacts with positive people
@@ -116,12 +140,29 @@ app.get('/calculate', (req, res) => {
         });
         console.log("Positive Records: ", positiveRecords);
 
+        //get mf and rl from mongoDB
+        const params = await parameters.find({});
+        let days, outdoors, duration, degree;
+        params.forEach( (param) => {
+            switch(param.factor_label) {
+                case 'days':
+                    days = param;
+                    break;
+                case 'outdoors':
+                    outdoors = param;
+                    break;
+                case 'duration':
+                    duration = param;
+                    break;
+                case 'degree_of_contact':
+                    degree = param;
+                    break;
+            }
+        });
+        
         const riskFactors = positiveRecords.map( record => {
-            //TODO: get mf and rl dynamically
-
             //Factor 1, number of days
-            const daysMf = 4;
-            const daysRl = [10, 8, 6, 3, 1];
+            const {multiplication_factor: daysMf, risk_levels: daysRl} = days;
             
             const now = new Date().getTime();
             const daysPast = (now - record.relationship.timestamp) / (3600 * 24 * 1000);
@@ -139,13 +180,11 @@ app.get('/calculate', (req, res) => {
                 daysRf = daysRl[4] * daysMf;
 
             //Factor 2, indoors/outdoors
-            const outdoorsMf = 2;
-            const outdoorsRl = [8, 6];
+            const {multiplication_factor: outdoorsMf, risk_levels: outdoorsRl} = outdoors;
             const outdoorsRf = record.relationship.outdoors ? outdoorsMf * outdoorsRl[1] : outdoorsMf * outdoorsRl[0];
 
             //Factor 3, duration
-            const durationMf = 1;
-            const durationRl = [10, 6, 3];
+            const {multiplication_factor: durationMf, risk_levels: durationRl} = duration;
 
             let durationRf = durationMf * durationRl[1]; //default to mid
 
@@ -162,8 +201,7 @@ app.get('/calculate', (req, res) => {
             }
 
             //Factor 4, degree of contact
-            const degreeMf = 5;
-            const degreeRl = [10, 6, 3, 1];
+            const {multiplication_factor: degreeMf, risk_levels: degreeRl} = degree;
             const degreeRf = degreeMf * degreeRl[record.degreeOfContact - 1];
 
             const maxValue = daysMf * Math.max(...daysRl) +
@@ -178,7 +216,8 @@ app.get('/calculate', (req, res) => {
                     duration: record.relationship.duration,
                     degreeOfContact: record.degreeOfContact,
                     outdoors: record.relationship.outdoors
-                }
+                },
+                isPositive: false
             }
         });
         console.log(riskFactors);
