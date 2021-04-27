@@ -12,6 +12,16 @@ const CreateEntry = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [msg, setMsg] = useState('');
     const [showScanner, setShowScanner] = useState(false);
+    const [outdoors, setOutdoors] = useState(false);
+    const [duration, setDuration] = useState('');
+
+    const handleCheckboxChange = (e) => {
+        setOutdoors(e.target.checked);
+    }
+
+    const handleSelect = (e) => {
+        setDuration(e.target.value);
+    }
 
     const handleChange = (e, idx) => {
 
@@ -51,11 +61,19 @@ const CreateEntry = () => {
         setIsLoading(true);
         setMsg('');
 
+        if (duration === '') {
+            setMsg('Please specify meeting duration');
+            setIsLoading(false);
+            return;
+        }
+
         const filteredCodes = codes.filter((c) => c !== "");
         if (filteredCodes.length !== 0) {
             axios.post('http://localhost:5000/filiation', {
                 from: user.id,
-                to: filteredCodes
+                to: filteredCodes,
+                duration: duration,
+                outdoors: outdoors
             }).then((res) => {
                 setMsg('Participants added successfully');
             }).catch((err) => {
@@ -129,6 +147,19 @@ const CreateEntry = () => {
                             <button className={styles.addMoreBtn} onClick={toggleScanner}>{showScanner ? 'Cancel' : '+ Scan QR'}</button>
                         </div>
                     </div>
+                </div>
+                <div className={styles.outdoors}>
+                    <input id="outdoors" name="outdoors" type="checkbox" checked={outdoors} onChange={handleCheckboxChange}></input>
+                    <label htmlFor="outdoors">This meeting took place outdoors</label>
+                </div>
+                <div className={styles.duration}>
+                    <label htmlFor="duration">Meeting duration: </label>
+                    <select name="duration" id="duration" onChange={handleSelect} value={duration}>
+                        <option value="">&lt;select&gt;</option>
+                        <option value="low"> Less than 5 minutes</option>
+                        <option value="mid"> Less than 15 minutes</option>
+                        <option value="high"> More than 15 minutes</option>
+                    </select>
                 </div>
                 <button onClick={handleSubmit} disable={isLoading.toString()}>SUBMIT</button>
                 {isLoading ? <p className={styles.msg}>Loading...</p> : null}
