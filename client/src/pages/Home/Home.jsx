@@ -24,6 +24,11 @@ const Home = () => {
     }
 
     useEffect(() => {
+        if(!user.user.eftsCodes.length) {
+            setRiskFactor('No efts code');
+            return;
+        }
+
         setIsLoading(true);
         axios.get('http://localhost:5000/calculate', {
             params: {
@@ -42,7 +47,7 @@ const Home = () => {
                 setRiskFactor('Cannot calculate at the moment');
             setIsLoading(false);
         });
-    }, [])
+    }, [user.user.eftsCodes, user.user.id])
 
     return (
         <div className={styles.container}>
@@ -57,7 +62,11 @@ const Home = () => {
                     <p><span>Gender: </span> {user.user.gender === "M" ? "Male" : "Female"}</p>
                     <p><span>Date of birth: </span> {user.user.dob}</p>
                     <p><span>Age: </span> {calculateAge(user.user.dob)}</p>
-                    <p><span>Risk factor: </span>{isNaN(riskFactor) ? riskFactor : formattedRiskFactor(riskFactor)}</p>
+                    <p>
+                        <span>Risk factor: </span>
+                        {loading && <span>Loading..</span>}
+                        {!loading && (isNaN(riskFactor) ? <span>{riskFactor}</span> : formattedRiskFactor(riskFactor))}
+                    </p>
                     <button onClick={handleLogout}>Logout</button>
                 </div>
             </div>
