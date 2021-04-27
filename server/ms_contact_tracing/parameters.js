@@ -7,10 +7,12 @@ var userSchema = new mongoose.Schema({
     },
     multiplication_factor: {
         type: Number,
-        required: true
     },
     risk_levels: {
         type: [Number]
+    },
+    value: {
+        type: Number
     }
 });
 

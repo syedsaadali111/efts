@@ -74,17 +74,25 @@ app.post('/citizen', (req, res) => {
 
 app.get('/calculate', async (req, res) => {
 
-    const subjectId = req.query.id;
+    let subjectId;
+    let citizen;
+
+    if(req.query.id) {
+        subjectId = req.query.id;
+        citizen = await eftsCodes.findOne({"TC": subjectId});
+    } else {
+        citizen = await eftsCodes.findOne( {"Codes.EFTScode": { $eq: req.query.code} });
+        subjectId = citizen?.TC;
+    }
+
     console.log(subjectId);
 
-    //check if person is positive
-    const citizen = await eftsCodes.findOne({"TC": subjectId});
-    
     if(!citizen) {
         res.status(500).json({msg: 'Cannot find citizen data in the database'});
         return;
     }
-
+    
+    //check if person is positive
     if (citizen?.Status) {
         res.json({isPositive: true});
         return;
@@ -142,7 +150,8 @@ app.get('/calculate', async (req, res) => {
 
         //get mf and rl from mongoDB
         const params = await parameters.find({});
-        let days, outdoors, duration, degree;
+        console.log('params', params);
+        let days, outdoors, duration, degree, maxDays;
         params.forEach( (param) => {
             switch(param.factor_label) {
                 case 'days':
@@ -157,6 +166,8 @@ app.get('/calculate', async (req, res) => {
                 case 'degree_of_contact':
                     degree = param;
                     break;
+                case 'max_days':
+                    maxDays = param;
             }
         });
         
@@ -166,6 +177,19 @@ app.get('/calculate', async (req, res) => {
             
             const now = new Date().getTime();
             const daysPast = (now - record.relationship.timestamp) / (3600 * 24 * 1000);
+
+            if (!!maxDays.value && daysPast > maxDays.value) {
+                return {
+                    riskFactor: 0,
+                    details: {
+                        daysPast: Math.floor(daysPast),
+                        duration: record.relationship.duration,
+                        degreeOfContact: record.degreeOfContact,
+                        outdoors: record.relationship.outdoors
+                    },
+                    isPositive: false
+                }
+            }
 
             let daysRf;
             if (daysPast <= 3)

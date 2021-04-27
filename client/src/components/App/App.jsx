@@ -7,6 +7,7 @@ import AuthProvider from '../../components/AuthProvider/AuthProvider';
 import Home from '../../pages/Home/Home';
 import SignUp from '../../pages/SignUp/SignUp';
 import Navbar from '../../components/Navbar/Navbar';
+import Verify from '../../pages/Verify/Verify';
 
 function App() {
   return (
@@ -28,6 +29,9 @@ function App() {
           </Route>
           <Route path="/generate">
             <GenerateCode />
+          </Route>
+          <Route path="/risk">
+            <Verify />
           </Route>
         </AuthProvider>
         <Redirect to="/" />

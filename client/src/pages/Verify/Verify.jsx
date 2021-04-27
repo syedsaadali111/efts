@@ -70,9 +70,9 @@ const Verify = () => {
     const handleQrScan = (data) => {
         if(data){
             console.log(data);
-                setEfts(data);
-                setShowScanner(false);
-                return;
+            setEfts(data);
+            setShowScanner(false);
+            return;
         }
     }
     

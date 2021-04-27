@@ -44,12 +44,47 @@
     width: 100%;    
     color: #ba1b08;
     font-weight: bold;
-    padding: 10px 25px;
+    padding: 10px 0px;
     font-size: 18px;
 }
 
 .profile span {
     color: #585858;
     padding-right: 10px;
+}
+
+.profile button {
+    width: auto;
+    padding: 10px;
+}
+
+/* For Tablets */
+@media only screen and (max-width: 1024px) {
+    .main {
+        width: 70%;
+    }
+}
+
+/* For Mobile Phones */
+@media only screen and (max-width: 600px) {
+    .main {
+        width: 80%;
+    }
+
+    .main h2 {
+        font-size: 20px;
+    }
+
+    .main button {
+        font-size: 15px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .addCodesForm {
+        width: 70%;
+    }
 }
 

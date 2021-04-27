@@ -21,8 +21,9 @@ function Navbar () {
             </div>            
             <div className={styles.navbarItems}>
                 <ul>
-                    <li><NavLink to='/filiation'>Contact Tracing</NavLink></li>
-                    <li><NavLink to='/generate'>Your EFTS codes</NavLink></li>
+                    <li><NavLink activeClassName={styles.active} to='/filiation'>Contact Tracing</NavLink></li>
+                    <li><NavLink activeClassName={styles.active} to='/generate'>Your EFTS codes</NavLink></li>
+                    <li><NavLink activeClassName={styles.active} to='/risk'>Check Risk Factor</NavLink></li>
                 </ul>
             </div>
             <div className={styles.navbarUser}>
