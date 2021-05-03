@@ -18,7 +18,7 @@ const Home = () => {
         <div className={styles.main}>
             <Link to='/requests'>Institute Requests</Link>
             <Link to='/users'>Adminsitrators</Link>
-            <Link to='/'>Risk Factor Calculations</Link>
+            <Link to='/parameters'>Risk Factor Calculations</Link>
             <button onClick={handleLogout}>Logout</button>
         </div>
     );
