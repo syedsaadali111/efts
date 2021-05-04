@@ -106,7 +106,7 @@ input[type=number] {
     background-color: white;
     padding: 10px 30px;
     border-radius: 10px;
-    font-weight: bolder;
+    font-weight: bold;
 }
 
 .codesRow h2 {
@@ -115,7 +115,7 @@ input[type=number] {
 
 .codesRow p {
     font-size: 14px;
-    color: #ba1a08a6;
+    color: #7a10048c;
 }
 
 .codesRow button {
@@ -179,9 +179,5 @@ input[type=number] {
 
     .header h1 {
         font-size: 24px;
-    }
-
-    .addCodesForm {
-        width: 70%;
     }
 }

@@ -6,6 +6,7 @@ import CreateRule from '../../pages/CreateRule/CreateRule';
 import AuthProvider from '../AuthProvider/AuthProvider';
 import Home from '../../pages/Home/Home';
 import Verify from '../../pages/Verify/Verify';
+import Navbar from '../Navbar/Navbar';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <SignUp />
         </Route>
         <AuthProvider>
+          <Navbar></Navbar>
           <Route exact path="/">
             <Home/>
           </Route>
