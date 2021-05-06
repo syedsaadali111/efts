@@ -3,9 +3,12 @@ import { UserContext } from '../../helpers/userContext';
 import { useHistory } from 'react-router-dom';
 import styles from './Home.module.css';
 import axios from 'axios';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css'; 
+import ReactTooltip from 'react-tooltip';
 
 const Home = () => {
-    const [riskFactor, setRiskFactor] = useState('');
+    const [riskFactor, setRiskFactor] = useState(null);
     const [loading, setIsLoading] = useState(false);
 
     const user = useContext(UserContext);
@@ -57,39 +60,76 @@ const Home = () => {
             <div className={styles.main}>
                 <div className={styles.profile}>
                     <table>
-                        <tr>
-                            <td>TC Kimlik no:</td>
-                            <td>{user.user.id}</td>
-                        </tr>
-                        <tr>
-                            <td>Name:</td>
-                            <td>{user.user.fname}</td>
-                        </tr>
-                        <tr>
-                            <td>Surname:</td>
-                            <td>{user.user.sname}</td>
-                        </tr>
-                        <tr>
-                            <td>Gender:</td>
-                            <td>{user.user.gender === "M" ? "Male" : "Female"}</td>
-                        </tr>
-                        <tr>
-                            <td>Date of birth:</td>
-                            <td>{calculateAge(user.user.dob)}</td>
-                        </tr>
-                        <tr>
-                            <td>Risk factor:</td>
-                            <td>
-                                {loading && <span>Loading..</span>}
-                                {!loading && (isNaN(riskFactor) ? <span>{riskFactor}</span> : formattedRiskFactor(riskFactor))}
-                            </td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <td>Citizen ID:</td>
+                                <td>{user.user.id}</td>
+                            </tr>
+                            <tr>
+                                <td>Name:</td>
+                                <td>{user.user.fname}</td>
+                            </tr>
+                            <tr>
+                                <td>Surname:</td>
+                                <td>{user.user.sname}</td>
+                            </tr>
+                            <tr>
+                                <td>Gender:</td>
+                                <td>{user.user.gender === "M" ? "Male" : "Female"}</td>
+                            </tr>
+                            <tr>
+                                <td>Age:</td>
+                                <td>{calculateAge(user.user.dob)}</td>
+                            </tr>
+                        </tbody>
                     </table>
-                    <button onClick={handleLogout}>Logout</button>
+                    <p>Risk Factor
+                        <span className={styles.tooltip}
+                        data-tip="This percentage represents 
+                        the risk an individual holds of
+                        spreading the disease/virus to others">?</span></p>
+                    {isNaN(riskFactor) ? <p>Recently tested positive!</p> : null}
+                    <ReactTooltip />
+                    <div className={styles.circleContainer}>
+                        <CircularProgressbar 
+                            value={getValueForCircle(riskFactor)}
+                            maxValue={1}
+                            text={getTextForCircle(riskFactor)}
+                            strokeWidth={5}
+                            styles={buildStyles({
+                                // Text size
+                                textSize: '16px',
+                            
+                                // Colors
+                                pathColor: '#ba1b08',
+                                textColor: '#ba1b08',
+                                trailColor: '#d6d6d6',
+                                backgroundColor: '#3e98c7',
+                            })}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
     );
+}
+
+const getTextForCircle = (riskFactor) => {
+    if(riskFactor === null) {
+        return 'Loading...';
+    }
+
+    if(isNaN(riskFactor))
+        return '100%';
+    return formattedRiskFactor(riskFactor);
+}
+
+const getValueForCircle = (riskFactor) => {
+    if(riskFactor === null)
+        return 0;
+    if(isNaN(riskFactor))
+        return 1;
+    return (riskFactor.toFixed(3));
 }
 
 const formattedRiskFactor = (rf) => {
