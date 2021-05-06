@@ -109,6 +109,15 @@
 
 .outdoors, .duration {
     align-self: center;
+    padding: 8px;
+}
+
+.outdoors input {
+    border: 1px solid black;
+}
+
+.duration label {
+    margin-right: 12px;
 }
 
 .duration select {

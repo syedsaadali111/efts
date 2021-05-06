@@ -4,7 +4,7 @@
     text-align: center;
 }
 
-.container {
+.container {    
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -44,18 +44,35 @@
     width: 100%;    
     color: #ba1b08;
     font-weight: bold;
-    padding: 10px 0px;
+    padding: 10px 0;
     font-size: 18px;
 }
 
-.profile span {
+.profile table {
+    text-align: left;
+    margin: auto;
+    width: 50%;
+    border-spacing: 0;
+}
+
+.profile td {
+    padding: 15px 5px;
+    border-bottom: 1px solid #a1a1a160;    
+}
+
+.profile td:first-child {
     color: #585858;
-    padding-right: 10px;
+    padding-right: 5px;
+    text-align: right;
 }
 
 .profile button {
     width: auto;
-    padding: 10px;
+    padding: 15px;
+}
+
+.profile button:hover {
+    background: #ba1a089d;
 }
 
 /* For Tablets */
@@ -83,8 +100,8 @@
         font-size: 24px;
     }
 
-    .addCodesForm {
-        width: 70%;
+    .profile table {
+        width: 92%
     }
 }
 

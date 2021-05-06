@@ -13,7 +13,8 @@ const multiselectStyles = {
     searchBox: {
         border: "1px solid white",
         background: "white",
-        borderRadius: "5px"
+        borderRadius: "5px",
+        margin: "0px"
     },
     chips: {
         background: "#ff4129"
@@ -187,13 +188,13 @@ const CreateRule = () => {
             <div className={styles.main}>
                 {user.rule_issuer ? (
                     <form onSubmit={(e) => handleSubmit(e)}>
-                        <label htmlFor="name">*Rule Label</label>
+                        <label htmlFor="name">*Rule Label:</label>
                         <input value={formState.name} onChange={e => handleChange(e)} id="name" name="name" placeholder="e.g. Health Ministry" />
-                        <label htmlFor="description">*Description</label>
+                        <label htmlFor="description">*Description:</label>
                         <input value={formState.description} onChange={e => handleChange(e)} id="description" name="description" placeholder="Institute description"/>
                         <div className={styles.optionContainer}>
                             <div className={styles.inner}>
-                            <label htmlFor="priority">*Priority</label>
+                            <label htmlFor="priority">*Priority: </label>
                                 <select onChange={e => handleChange(e)} id="priority" name="priority" value={formState.priority}>
                                     <option value="">&lt;choose&gt;</option>
                                     <option value="1">1</option>
@@ -204,13 +205,13 @@ const CreateRule = () => {
                                 </select>   
                             </div>
                         </div>
-                        <label htmlFor="sdate">*Applicable from</label>
+                        <label htmlFor="sdate">*Applicable from:</label>
                         <input value={formState.sdate} type="date" onChange={e => handleChange(e)} id="sdate" name="sdate" placeholder="Date of birth" />
-                        <label htmlFor="edate">Applicable till (leave blank if indefinite)</label>
+                        <label htmlFor="edate">Applicable till (leave blank if indefinite):</label>
                         <input value={formState.edate} type="date" onChange={e => handleChange(e)} id="edate" name="edate" placeholder="Date of birth" />
-                        <label>Apply rule between these hours<br></br>(Leave blank to apply rule throughout the day):</label>
+                        <label>Apply rule between these hours<br></br>(Leave blank to apply rule throughout the day)</label>
                         <div className={styles.timeContainer}>
-                            <label htmlFor="timeFrom" >From</label>
+                            <label htmlFor="timeFrom" >From:</label>
                             <select name="timeFrom" onChange={e => handleChange(e)} id="timeFrom" value={formState.timeFrom}>
                                 <option value="">&lt;choose&gt;</option>
                                 <option value="00:00">00:00</option>
@@ -238,7 +239,7 @@ const CreateRule = () => {
                                 <option value="22:00">22:00</option>
                                 <option value="23:00">23:00</option>
                             </select>
-                            <label htmlFor="timeTo" >To</label>
+                            <label htmlFor="timeTo" >To:</label>
                             <select id="timeTo" name="timeTo" onChange={e => handleChange(e)} value={formState.timeTo}>
                                 <option value="">&lt;choose&gt;</option>
                                 <option value="00:00">00:00</option>

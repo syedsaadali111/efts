@@ -16,6 +16,8 @@ function Navbar() {
 
     const user = useContext(UserContext);
 
+    console.log(user);
+
     const [sidebar, setSidebar] = useState(false);
 
     const showSidebar = () => setSidebar(!sidebar);
@@ -32,16 +34,14 @@ function Navbar() {
             </div>
             <nav className={styles.navMenu}>
                 <ul>
-                    <li><NavLink activeClassName={styles.active} to='/filiation'>Contact Tracing</NavLink></li>
-                    <li><NavLink activeClassName={styles.active} to='/generate'>Your EFTS codes</NavLink></li>
-                    <li><NavLink activeClassName={styles.active} to='/risk'>Check Risk Factor</NavLink></li>
+                    <li><NavLink activeClassName={styles.active} to='/rule'>Create a Rule</NavLink></li>
+                    <li><NavLink activeClassName={styles.active} to='/verify'>Verify EFTS Code</NavLink></li>
                 </ul>
             </nav>
             <nav className={sidebar ? `${styles.sidebar} ${styles.active}` : styles.sidebar}>
                 <ul onClick={showSidebar}>
-                    <li><NavLink activeClassName={styles.active} to='/filiation'>Contact Tracing</NavLink></li>
-                    <li><NavLink activeClassName={styles.active} to='/generate'>Your EFTS codes</NavLink></li>
-                    <li><NavLink activeClassName={styles.active} to='/risk'>Check Risk Factor</NavLink></li>
+                    <li><NavLink activeClassName={styles.active} to='/rule'>Create a Rule</NavLink></li>
+                    <li><NavLink activeClassName={styles.active} to='/verify'>Verify EFTS Code</NavLink></li>  
                 </ul>
                 <button onClick={handleLogout}>Logout</button>
             </nav>
@@ -49,7 +49,7 @@ function Navbar() {
                 <p onClick={hideSidebar}>
                     <NavLink activeClassName={styles.active} exact to='/'>
                         <FaIcons.FaUser className={styles.icon}/>
-                        {user.user.fname} {user.user.sname}
+                        {user.name}
                     </NavLink>
                 </p>
                 <button onClick={handleLogout}>Logout</button>

@@ -9,7 +9,7 @@ const Home = () => {
     const [loading, setIsLoading] = useState(false);
 
     const user = useContext(UserContext);
-    console.log(user);
+    //console.log(user);
 
     const history = useHistory();
 
@@ -17,14 +17,14 @@ const Home = () => {
         localStorage.removeItem('jwt');
         history.push('/login');
     }
-    
+
     const calculateAge = (dob) => {
         console.log(new Date(Date.now()).getFullYear() - dob.split('/').reverse()[0]);
         return (new Date(Date.now()).getFullYear() - dob.split('/').reverse()[0]);
     }
 
     useEffect(() => {
-        if(!user.user.eftsCodes.length) {
+        if (!user.user.eftsCodes.length) {
             setRiskFactor('No efts code');
             return;
         }
@@ -34,14 +34,14 @@ const Home = () => {
             params: {
                 id: user.user.id
             }
-        }).then( ( {data}) => {
-            if(!data.isPositive)
+        }).then(({ data }) => {
+            if (!data.isPositive)
                 setRiskFactor(data.riskFactor);
             else
                 setRiskFactor('100%, recently tested positive');
             setIsLoading(false);
-        }).catch( (e) => {
-            if(e?.response?.data?.msg)
+        }).catch((e) => {
+            if (e?.response?.data?.msg)
                 setRiskFactor(e.response.data.msg);
             else
                 setRiskFactor('Cannot calculate at the moment');
@@ -56,17 +56,35 @@ const Home = () => {
             </div>
             <div className={styles.main}>
                 <div className={styles.profile}>
-                    <p><span>TC Kimlik no: </span> {user.user.id}</p>
-                    <p><span>Name: </span> {user.user.fname}</p>
-                    <p><span>Surname: </span> {user.user.sname}</p>
-                    <p><span>Gender: </span> {user.user.gender === "M" ? "Male" : "Female"}</p>
-                    <p><span>Date of birth: </span> {user.user.dob}</p>
-                    <p><span>Age: </span> {calculateAge(user.user.dob)}</p>
-                    <p>
-                        <span>Risk factor: </span>
-                        {loading && <span>Loading..</span>}
-                        {!loading && (isNaN(riskFactor) ? <span>{riskFactor}</span> : formattedRiskFactor(riskFactor))}
-                    </p>
+                    <table>
+                        <tr>
+                            <td>TC Kimlik no:</td>
+                            <td>{user.user.id}</td>
+                        </tr>
+                        <tr>
+                            <td>Name:</td>
+                            <td>{user.user.fname}</td>
+                        </tr>
+                        <tr>
+                            <td>Surname:</td>
+                            <td>{user.user.sname}</td>
+                        </tr>
+                        <tr>
+                            <td>Gender:</td>
+                            <td>{user.user.gender === "M" ? "Male" : "Female"}</td>
+                        </tr>
+                        <tr>
+                            <td>Date of birth:</td>
+                            <td>{calculateAge(user.user.dob)}</td>
+                        </tr>
+                        <tr>
+                            <td>Risk factor:</td>
+                            <td>
+                                {loading && <span>Loading..</span>}
+                                {!loading && (isNaN(riskFactor) ? <span>{riskFactor}</span> : formattedRiskFactor(riskFactor))}
+                            </td>
+                        </tr>
+                    </table>
                     <button onClick={handleLogout}>Logout</button>
                 </div>
             </div>
@@ -77,5 +95,5 @@ const Home = () => {
 const formattedRiskFactor = (rf) => {
     return (Math.round(rf * 1000) / 10) + '%';
 }
- 
+
 export default Home;

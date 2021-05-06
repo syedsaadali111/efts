@@ -46,7 +46,7 @@ const Login = () => {
             <div className={styles.main}>
                 <h2>Login as a public institute</h2>
                 <form onSubmit={ (e) => { handleSubmit(e) }}>
-                    <label>Email</label>
+                    <label>Email:</label>
                     <input type="text" name="email" id="email" placeholder="someone@institute.com" value={formValues.email} onChange={ (e) => handleChange(e) }/>
                     <label>Password:</label>
                     <input type="password" name="password" id="password" value={formValues.password} onChange={ (e) => handleChange(e) }/>
