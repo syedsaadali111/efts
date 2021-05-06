@@ -45,7 +45,7 @@ const Login = () => {
             <div className={styles.main}>
                 <h2>Login to use EFTS services</h2>
                 <form onSubmit={ (e) => { handleSubmit(e) }}>
-                    <label>National Id:</label>
+                    <label>Citizen Id:</label>
                     <input type="number" name="id" id="id" placeholder="9xxxxxxxxxx" value={formValues.id} onChange={ (e) => handleChange(e) }/>
                     <label>Password:</label>
                     <input type="password" name="password" id="password" value={formValues.password} onChange={ (e) => handleChange(e) }/>

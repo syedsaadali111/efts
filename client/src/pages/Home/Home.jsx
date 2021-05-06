@@ -78,7 +78,7 @@ const Home = () => {
                                 <td>{user.user.gender === "M" ? "Male" : "Female"}</td>
                             </tr>
                             <tr>
-                                <td>Date of birth:</td>
+                                <td>Age:</td>
                                 <td>{calculateAge(user.user.dob)}</td>
                             </tr>
                         </tbody>
