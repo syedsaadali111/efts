@@ -80,6 +80,10 @@
 
 .resultContainer {
     text-align: center;
+    background-color: white;
+    padding: 15px;
+    border-radius: 20px;
+    color: #793027;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -104,6 +108,7 @@ input[type=number] {
     display: inline-block;
     cursor: pointer;
     vertical-align: top;
+    color: white;
 }
 
 .container .addMoreBtn {
@@ -131,6 +136,12 @@ input[type=number] {
     max-width: 400px;
     max-height: 400px;
     margin: auto;
+}
+
+.circleContainer {
+    max-width: 150px;
+    margin: 0 auto;
+    padding-bottom: 20px;
 }
 
 /* For Tablets */

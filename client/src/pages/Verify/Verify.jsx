@@ -3,20 +3,29 @@ import styles from './Verify.module.css';
 import axios from 'axios';
 import ReactTooltip from 'react-tooltip';
 import QrReader from 'react-qr-reader';
+import {CircularProgressbar, buildStyles} from 'react-circular-progressbar';
 
 const Verify = () => {
 
     const [efts, setEfts] = useState('EFTS-');
     const [isLoading, setIsLoading] = useState(false);
     const [msg, setMsg] = useState('');
-    const [result, setResult] = useState(null);
+    const [result, setResult] = useState({
+        riskFactor: null,
+        details: null,
+        isPositive: null
+    });
     const [showScanner, setShowScanner] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
         setMsg('');
-        setResult(null);
+        setResult({
+            riskFactor: null,
+            details: null,
+            isPositive: null
+        });
 
         axios.get('http://localhost:5000/calculate', {
             params: {
@@ -105,23 +114,35 @@ const Verify = () => {
                         <button type="button" className={styles.addMoreBtn} onClick={toggleScanner}>{showScanner ? 'Cancel' : '+ Scan QR'}</button>
                     </div>
                     {msg && <p>{msg}</p>}
-                    {isLoading && <p>Loading...</p>}
                     <button type="submit">Verify</button>
                 </form>
 
                 {
-                    result !== null ? (
+                    (isLoading || result.riskFactor) !== null ? (
                         <>
                         <div className={styles.resultContainer}>
                             <h3>Risk Factor for this citizen <span className={styles.tooltip} data-tip="This percentage represents 
                             the risk an individual holds of spreading the disease/virus to others">?</span></h3>
                             {console.log(result)}
-                            {result.isPositive ? 
-                                <>
-                                    <h3>100%</h3>
-                                    <h3>This person was recently tested positive for the virus/disease</h3>
-                                </> : 
-                                <h2>{formattedRiskFactor(result.riskFactor)}</h2>}
+                            {result.isPositive ? <h3>This person was recently tested positive for the virus/disease</h3> : null}
+                            <div className={styles.circleContainer}>
+                                <CircularProgressbar 
+                                    value={getValueForCircle(result.riskFactor)}
+                                    maxValue={1}
+                                    text={getTextForCircle(result.riskFactor)}
+                                    strokeWidth={5}
+                                    styles={buildStyles({
+                                        // Text size
+                                        textSize: '16px',
+                                    
+                                        // Colors
+                                        pathColor: '#ba1b08',
+                                        textColor: '#ba1b08',
+                                        trailColor: '#d6d6d6',
+                                        backgroundColor: '#3e98c7',
+                                    })}
+                                />
+                            </div>
                         </div>
                         <ReactTooltip />
                         </>
@@ -134,6 +155,24 @@ const Verify = () => {
 
 const formattedRiskFactor = (rf) => {
     return (Math.round(rf * 1000) / 10) + '%';
+}
+
+const getTextForCircle = (riskFactor) => {
+    if(riskFactor === null) {
+        return 'Loading...';
+    }
+
+    if(isNaN(riskFactor))
+        return '100%';
+    return formattedRiskFactor(riskFactor);
+}
+
+const getValueForCircle = (riskFactor) => {
+    if(riskFactor === null)
+        return 0;
+    if(isNaN(riskFactor))
+        return 1;
+    return (riskFactor.toFixed(3));
 }
  
 export default Verify;
