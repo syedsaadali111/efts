@@ -5,6 +5,8 @@ import Home from '../../pages/Home/Home';
 import AuthProvider from '../../components/AuthProvider/AuthProvider';
 import Requests from '../../pages/Requests/Requests';
 import CreateUser from '../../pages/CreateUser/CreateUser';
+import Parameters from '../../pages/Parameters/Parameters';
+import Report from '../../pages/Report/Report';
 
 function App() {
   return (
@@ -22,6 +24,12 @@ function App() {
           </Route>
           <Route path="/users">
             <CreateUser />
+          </Route>
+          <Route path="/parameters">
+            <Parameters />
+          </Route>
+          <Route path="/report">
+            <Report />
           </Route>
         </AuthProvider>
         <Redirect to="/" />

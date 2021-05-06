@@ -329,6 +329,36 @@ app.post('/filiation',async (req, res) => {
     });
 });
 
+app.get('/report', (req, res) => {
+    const session = driver.session();
+
+    const readTxPromise = session.readTransaction(async tx => {
+        const result = tx.run('MATCH p=allShortestPaths((:Citizen {id: toInteger($id)})-[:MET*1..4]-(c:Citizen)) ' +
+                                'WHERE c.id <> toInteger($id) ' +
+                                'RETURN c, relationships(p) AS r ', {id: req.query.id});
+        return result;
+    });
+
+    readTxPromise.then(async (result) => {
+        const records = result.records.map((r) => {
+            const relationship = r.get('r')[0].properties;
+            relationship.timestamp = parseInt(relationship.timestamp.toString());
+            return {
+                citizenId: parseInt(r.get('c').properties.id.toString()),
+                relationship: relationship,
+                degreeOfContact: r.get('r').length
+            }
+        });
+        const sortedRecords = records.sort( (a, b) => {
+            return b.relationship.timestamp - a.relationship.timestamp;
+        });
+        res.json({'records': sortedRecords});
+        session.close();
+    }).catch( () => {
+        res.json({msg: 'An error occured, try again later.'});
+    });
+})
+
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`runnin on port ${PORT}`);

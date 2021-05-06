@@ -156,8 +156,8 @@ const CreateEntry = () => {
                     <label htmlFor="duration">Meeting duration: </label>
                     <select name="duration" id="duration" onChange={handleSelect} value={duration}>
                         <option value="">&lt;select&gt;</option>
-                        <option value="low"> Less than 5 minutes</option>
-                        <option value="mid"> Less than 15 minutes</option>
+                        <option value="low"> Less than or equal to 5 minutes</option>
+                        <option value="mid"> Less than or equal to 15 minutes</option>
                         <option value="high"> More than 15 minutes</option>
                     </select>
                 </div>

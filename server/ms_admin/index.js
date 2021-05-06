@@ -4,6 +4,7 @@ const admin_user = require('./adminlogindb');
 const p_login = require('./public_institute_logindb')
 const p_insts = require('./public_institutedb')
 const mongoose = require('mongoose');
+const parameters = require('./parameters');
 const jwt = require('jsonwebtoken')
 const cors = require('cors');
 require('dotenv').config()
@@ -206,6 +207,23 @@ function authenticateToken(req, res, next) {
     })
   }
 
+app.post('/parameters', authenticateToken, (req, res) => {
+  console.log(req);
+  parameters.findOneAndUpdate({_id: req.body._id}, {...req.body}, (err, data) => {
+    if (err) {
+      res.status(500).json({msg: 'Cannot update parameters'});
+      return;
+    } else {
+      console.log(data);
+      res.status(200).json({msg: 'Successfully updated parameters'});
+    }
+  });
+});
+
+app.get('/parameters', authenticateToken, async (req, res) => {
+  const params = await parameters.find({});
+  res.send(params);
+});
 
 
 const PORT = 5005;
