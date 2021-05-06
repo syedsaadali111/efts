@@ -40,14 +40,20 @@ const Parameters = () => {
             outdoors: '',
         });
 
+        let shouldReturn = false;
+
         if(e.target.id !== 'maxDays') {
             parameters[e.target.id].risk_levels.forEach( (rl) => {
                 if(isNaN(rl)) {
-                    setMsgs({...msgs, [e.target.id]: 'Some values are missing'});
-                    setLoading(false);
-                    return;
+                    shouldReturn = true;
                 }
             })
+        }
+
+        if(shouldReturn){
+            setMsgs({...msgs, [e.target.id]: 'Some values are missing'});
+            setLoading(false);
+            return;
         }
 
         if(e.target.id !== 'maxDays' && isNaN(parameters[e.target.id].multiplication_factor)) {

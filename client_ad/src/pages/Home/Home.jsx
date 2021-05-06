@@ -19,6 +19,7 @@ const Home = () => {
             <Link to='/requests'>Institute Requests</Link>
             <Link to='/users'>Adminsitrators</Link>
             <Link to='/parameters'>Risk Factor Calculations</Link>
+            <Link to='/report'>Contact History</Link>
             <button onClick={handleLogout}>Logout</button>
         </div>
     );

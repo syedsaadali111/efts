@@ -1,0 +1,91 @@
+.header {
+    background-color: #7b3229;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.main h2 {
+    text-align: center; 
+    margin-bottom: 40px;
+}
+
+.main {
+    width: 70%;
+    margin: 20px auto;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    justify-content: space-around;
+}
+
+.row .label {
+    font-weight: bold;
+    margin-right: 7px;
+}
+
+.inputContainer {
+    text-align: center;
+}
+
+.inputContainer button{
+    margin-left: 5px;
+}
+
+.inputContainer button {
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #ba1b08;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.inputContainer input {
+    margin: 10px 0;
+    border-radius: 22px;
+    border: none;
+    padding: 10px;
+    color: #793027;
+    font-weight: bold;
+}
+
+.inputContainer input:focus-visible {
+    outline: none;
+}
+
+@media only screen and (max-width: 920px) {
+    .main {
+        width: 90%;
+    }
+}
+
+/* For Mobile Phones */
+@media only screen and (max-width: 920px) {
+    .row {
+        flex-direction: column;
+    }
+    
+    .row div {
+        margin-bottom: 10px;
+        border-bottom: 1px solid black;
+    }
+
+    .row .label {
+        margin-right: 14px;
+    }
+
+    
+}

@@ -12,6 +12,7 @@
     font-weight: bold;
     font-size: 18px;
     border-bottom: 1px solid #7b3229;
+    cursor: pointer;
 }
 
 .header {
