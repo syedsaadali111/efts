@@ -1,3 +1,7 @@
+.msg {
+    margin-left: 10px;
+}
+
 .main h2 {
     text-align: center; 
     margin-bottom: 40px;
@@ -10,6 +14,7 @@
 }
 
 .header {
+    margin-top: 4rem;
     background-color: #7b3229;
     text-align: center;
 }
@@ -17,7 +22,7 @@
 .main {
     display: flex; 
     flex-direction: column;
-    width: 70%;
+    width: 40%;
     margin: 20px auto;
 }
 
@@ -25,6 +30,7 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
+    margin-left: 10px;;
 }
 
 .subHead {
@@ -32,29 +38,55 @@
     font-weight: bold;
 }
 
-.btn {
-    margin: 20px 5px 20px auto;
-    border-radius: 10px;
-    padding: 5px;
+.main input {
+    width: 200px;
+    margin: 10px 0;
+    border-radius: 22px;
+    border: 1px solid #7b3229;
+    padding: 15px;
+    color: #793027;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.main input:focus{
+    outline: none;
+    transform: scale(1.05);
+}
+
+.main button {
+    width: min(100px, 100%);
+    margin-left: 10px;
+    border-radius: 30px;
+    padding: 12px;
     background-color: #ba1b08;
     color: white;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 15px;
     border: none;
     font-family: 'Montserrat', sans-serif;
 }
 
-.btn:hover{
+.main button:hover{
     cursor: pointer;
-    background-color: #801105;
 }
 
-.btn:disabled {
-    background-color: #444;
+.main button:focus{
+    outline: none;
+}
+
+.main button:disabled{
     cursor: default;
 }
 
 .btn:focus-visible{
     outline: none;
+}
+
+@media only screen and (max-width: 920px) {
+    .main {
+        width: 90%;
+    }
 }
 

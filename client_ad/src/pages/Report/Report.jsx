@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { /*useEffect,*/ useState } from 'react';
 import styles from './Report.module.css';
 import axios from 'axios';
 import Collapsible from '../../components/Collapsible/Collapsible';
@@ -34,64 +34,73 @@ const Report = () => {
         setData([]);
         setIsLoading(true);
         setMsg('');
-        axios.get('http://localhost:5000/report', {
-            params: {
-                id: parseInt(id)
-            }
-        }).then( ({data}) => {
+        if (id.length < 11 || id.length > 11 ) {
+            setMsg("Please enter a valid citizen ID");
             setIsLoading(false);
-            console.log(data);
-            setData(data.records);
-            if(!data.records.length)
-                setMsg('No contact tracing data found');
-        }).catch( (e) => {
-            if(e?.response?.data?.msg)
-                setMsg(e.response.data.msg);
-            else
-                setMsg('Unknowm error occured, try again in a while');
-            setIsLoading(false);
-        });
+        }
+        else {
+            axios.get('http://localhost:5000/report', {
+                params: {
+                    id: parseInt(id)
+                }
+            }).then(({ data }) => {
+                setIsLoading(false);
+                console.log(data);
+                setData(data.records);
+                if (!data.records.length)
+                    setMsg('No contact tracing data found');
+            }).catch((e) => {
+                if (e?.response?.data?.msg)
+                    setMsg(e.response.data.msg);
+                else
+                    setMsg('Unknowm error occured, try again in a while');
+                setIsLoading(false);
+            });
+        }
     }
 
     const handleChange = (e) => {
         setId(e.target.value);
     }
 
-    return(
+    return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1>Contact History</h1>
             </div>
             <div className={styles.main}>
-                <h2>Search By Citizen Id</h2>
+                <h2>Search by Citizen ID</h2>
                 <div className={styles.inputContainer}>
-                    <input placeholder="99xxxxxxxxx" type="number" value={id} onChange={handleChange}></input><button onClick={handleSearch}>Search</button>
+                    <input placeholder="99xxxxxxxxx" type="number" value={id} onChange={handleChange}></input>
+                    <button onClick={handleSearch}>Search</button>
                 </div>
-                {data.map( (r) => { return (
-                    <Collapsible heading={
-                        new Date(r.relationship.timestamp).toString().split('GMT')[0] + 
-                        ' [' + daysPast(r.relationship.timestamp) + ']'
-                    }>
-                        <div className={styles.row}>
-                            <div>
-                                <span className={styles.label}>Citizen Id:</span>
-                                <span>{r.citizenId}</span>
+                {data.map((r) => {
+                    return (
+                        <Collapsible heading={
+                            new Date(r.relationship.timestamp).toString().split('GMT')[0] +
+                            ' [' + daysPast(r.relationship.timestamp) + ']'
+                        }>
+                            <div className={styles.row}>
+                                <div>
+                                    <span className={styles.label}>Citizen Id:</span>
+                                    <span>{r.citizenId}</span>
+                                </div>
+                                <div>
+                                    <span className={styles.label}>Duration:</span>
+                                    <span>{durationString(r.relationship.duration)}</span>
+                                </div>
+                                <div>
+                                    <span className={styles.label}>Outdoors:</span>
+                                    <span>{r.relationship.outdoors ? 'Yes' : 'No'}</span>
+                                </div>
+                                <div>
+                                    <span className={styles.label}>Degree Of Contact:</span>
+                                    <span>{r.degreeOfContact}</span>
+                                </div>
                             </div>
-                            <div>
-                                <span className={styles.label}>Duration:</span>
-                                <span>{durationString(r.relationship.duration)}</span>
-                            </div>
-                            <div>
-                                <span className={styles.label}>Outdoors:</span>
-                                <span>{r.relationship.outdoors ? 'Yes' : 'No'}</span>
-                            </div>
-                            <div>
-                                <span className={styles.label}>Degree Of Contact:</span>
-                                <span>{r.degreeOfContact}</span>
-                            </div>
-                        </div>
-                    </Collapsible>
-                    )})
+                        </Collapsible>
+                    )
+                })
                 }
                 {loading && <p style={{ textAlign: 'center' }}>Loading...</p>}
                 <p style={{ textAlign: 'center' }}>{msg}</p>
@@ -101,7 +110,7 @@ const Report = () => {
 }
 
 const durationString = (duration) => {
-    switch(duration) {
+    switch (duration) {
         case 'low':
             return '<= 5 minutes';
         case 'mid':
@@ -109,7 +118,7 @@ const durationString = (duration) => {
         case 'high':
             return '> 15 minutes';
         default:
-            return duration;   
+            return duration;
     }
 }
 

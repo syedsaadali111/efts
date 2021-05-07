@@ -49,9 +49,10 @@
 }
 
 .profile table {
+    align-self: center;
     text-align: left;
     margin: auto;
-    width: 70%;
+    width: 65%;
     border-spacing: 0;
 }
 
@@ -67,9 +68,8 @@
 
 .profile tr td:first-child {
     color: #585858;
-    padding-right: 10px;
-    width: 40%;
-    text-align: right;
+    padding-right: 8px;
+    width: 35%
 }
 
 .profile button {

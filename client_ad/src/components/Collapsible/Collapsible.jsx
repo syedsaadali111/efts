@@ -12,7 +12,7 @@ const Collapsible = (props) => {
         <div className={styles.section}>
             <div className={styles.header}>
                 <p className={styles.pHead} onClick={handleClick}>{props.heading}</p>
-                <p className={styles.trigger} onClick={handleClick}>{shown ? 'Collapse' : 'Expand'}</p>
+                <p className={styles.trigger} onClick={handleClick}>{shown ? '-' : '+'}</p>
             </div>
             <div className={`${styles.body} ${shown ? styles.show : styles.hide}`}>
                 {props.children}

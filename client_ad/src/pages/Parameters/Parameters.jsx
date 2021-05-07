@@ -123,10 +123,10 @@ const Parameters = () => {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h1>Risk Factor Calculation</h1>
+                <h1>Risk Factor Parameters</h1>
             </div>
             <div className={styles.main}>
-                <h2>Customize how risk factor is calculated</h2>
+                <h2>Customize the Risk Factor Calculation Parameters</h2>
                 {loading && <h3>Loading...</h3>}
                 {parameters &&
                 <>
