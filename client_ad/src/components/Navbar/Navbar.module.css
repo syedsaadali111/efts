@@ -82,7 +82,7 @@
 
 .sidebar {
     background-color: #5a2720;
-    width: 220px;
+    width: 240px;
     height: 100vh;
     display: none;
     justify-content: flex-start;
@@ -155,7 +155,7 @@ a:active, a.active {
         display: none;
     }
     .sidebar button {
-        width: 220px;
+        width: 240px;
         height: 60px;
         border-radius: 0;
         margin: 0;
