@@ -11,8 +11,8 @@
 .section .pHead {
     font-weight: bold;
     font-size: 18px;
-    border-bottom: 1px solid #7b3229;
     cursor: pointer;
+    margin-bottom: 25px;
 }
 
 .header {
@@ -22,6 +22,9 @@
 
 .trigger {
     cursor: pointer;
+    color: #585858;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 .section .body {

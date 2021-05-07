@@ -1,6 +1,24 @@
-.main a, .main button {
-    width: min(250px, 100%);
-    margin: 20px;
+.header {
+    margin-top: 4rem;
+    background-color: #7b3229;
+    text-align: center;
+}
+
+.container {    
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+}
+
+.main {
+    width: 40%;
+    margin: 20px auto;
+}
+
+.container button {
+    width: 100%;
+    margin: 20px auto;
     border-radius: 30px;
     padding: 20px;
     background-color: #ba1b08;
@@ -9,23 +27,98 @@
     font-size: 18px;
     border: none;
     font-family: 'Montserrat', sans-serif;
-    text-align: center;
-    text-decoration: none;
 }
 
-.main {
-    display: flex;
-    flex-direction: column;
-}
-
-.main button:hover{
+.container button:hover {
     cursor: pointer;
 }
 
-.main button:focus{
+.container button:focus{
     outline: none;
 }
 
-a {
-    width: fit-content;
+.profile {
+    text-align: center;
+    background-color: white;
+    border-radius: 30px;
+    width: 100%;    
+    color: #ba1b08;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
+.profile table {
+    text-align: left;
+    margin: auto;
+    /* width: 50%; */
+    border-spacing: 0;
+}
+
+.profile td {
+    padding: 15px 5px;
+    border-bottom: 1px solid #a1a1a160;    
+}
+
+.profile td:first-child {
+    color: #585858;
+    padding-right: 5px;
+    /* text-align: right; */
+}
+
+.profile button {
+    width: auto;
+    padding: 15px;
+}
+
+.profile button:hover {
+    background: #ba1a089d;
+}
+
+.tooltip {
+    background-color: black;
+    border-radius: 50%;
+    font-size: 8px;
+    line-height: 10px;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    cursor: pointer;
+    vertical-align: top;
+    color: white;
+}
+
+/* For Tablets */
+@media only screen and (max-width: 1024px) {
+    .main {
+        width: 70%;
+    }
+}
+
+/* For Mobile Phones */
+@media only screen and (max-width: 600px) {
+    .main {
+        width: 80%;
+    }
+
+    .main h2 {
+        font-size: 20px;
+    }
+
+    .main button {
+        font-size: 15px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .profile table {
+        width: 92%
+    }
+}
+

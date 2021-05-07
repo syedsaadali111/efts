@@ -78,7 +78,7 @@ const CreateUser = () => {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h1>Administrators</h1>
+                <h1>Create Admin</h1>
             </div>
             <div className={styles.main}>
                 {user.type === 'superuser' ?

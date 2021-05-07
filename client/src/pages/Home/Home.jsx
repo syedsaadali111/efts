@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import styles from './Home.module.css';
 import axios from 'axios';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css'; 
+import 'react-circular-progressbar/dist/styles.css';
 import ReactTooltip from 'react-tooltip';
 
 const Home = () => {
@@ -15,12 +15,7 @@ const Home = () => {
     //console.log(user);
 
     const history = useHistory();
-
-    const handleLogout = () => {
-        localStorage.removeItem('jwt');
-        history.push('/login');
-    }
-
+    
     const calculateAge = (dob) => {
         console.log(new Date(Date.now()).getFullYear() - dob.split('/').reverse()[0]);
         return (new Date(Date.now()).getFullYear() - dob.split('/').reverse()[0]);
@@ -28,7 +23,7 @@ const Home = () => {
 
     useEffect(() => {
         if (!user.user.eftsCodes.length) {
-            setRiskFactor('No efts code');
+            setRiskFactor('No EFTS Code');
             return;
         }
 
@@ -78,20 +73,26 @@ const Home = () => {
                                 <td>{user.user.gender === "M" ? "Male" : "Female"}</td>
                             </tr>
                             <tr>
+                                <td>Date of Birth:</td>
+                                <td>{user.user.dob}</td>
+                            </tr>
+                            <tr>
                                 <td>Age:</td>
                                 <td>{calculateAge(user.user.dob)}</td>
                             </tr>
                         </tbody>
                     </table>
-                    <p>Risk Factor
+                    <p style={{ marginRight: "5px" }}>Risk Factor
                         <span className={styles.tooltip}
-                        data-tip="This percentage represents 
-                        the risk an individual holds of
-                        spreading the disease/virus to others">?</span></p>
+                            data-tip="This percentage represents 
+                            the risk an individual holds of
+                            spreading the disease/virus to others">?
+                        </span>
+                    </p>
                     {isNaN(riskFactor) ? <p>Recently tested positive!</p> : null}
                     <ReactTooltip />
                     <div className={styles.circleContainer}>
-                        <CircularProgressbar 
+                        <CircularProgressbar
                             value={getValueForCircle(riskFactor)}
                             maxValue={1}
                             text={getTextForCircle(riskFactor)}
@@ -99,7 +100,7 @@ const Home = () => {
                             styles={buildStyles({
                                 // Text size
                                 textSize: '16px',
-                            
+
                                 // Colors
                                 pathColor: '#ba1b08',
                                 textColor: '#ba1b08',
@@ -115,19 +116,19 @@ const Home = () => {
 }
 
 const getTextForCircle = (riskFactor) => {
-    if(riskFactor === null) {
+    if (riskFactor === null) {
         return 'Loading...';
     }
 
-    if(isNaN(riskFactor))
+    if (isNaN(riskFactor))
         return '100%';
     return formattedRiskFactor(riskFactor);
 }
 
 const getValueForCircle = (riskFactor) => {
-    if(riskFactor === null)
+    if (riskFactor === null)
         return 0;
-    if(isNaN(riskFactor))
+    if (isNaN(riskFactor))
         return 1;
     return (riskFactor.toFixed(3));
 }

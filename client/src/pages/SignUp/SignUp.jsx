@@ -74,8 +74,14 @@ const SignUp = () => {
                     );
                     setLoading(false);
                     setSignUpSuccess(true);
-                }).catch( () => {
-                    setMsg('A server error occured, try again in a while.');
+                }).catch( (e) => {
+                    console.log(e.response);
+                    if(e.response.data === "Data is already present") {
+                        setMsg('The data entered is already present.');
+                    } 
+                    else {
+                        setMsg('A server error occured, try again in a while.');
+                    }                    
                     setLoading(false);
                 })
             } else {

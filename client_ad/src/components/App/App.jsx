@@ -7,6 +7,7 @@ import Requests from '../../pages/Requests/Requests';
 import CreateUser from '../../pages/CreateUser/CreateUser';
 import Parameters from '../../pages/Parameters/Parameters';
 import Report from '../../pages/Report/Report';
+import Navbar from '../../components/Navbar/Navbar';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Login />
         </Route>
         <AuthProvider>
+          <Navbar></Navbar>
           <Route exact path="/">
             <Home/>
           </Route>

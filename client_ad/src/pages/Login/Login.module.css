@@ -19,6 +19,13 @@
     color: white;
 }
 
+.main a {
+    padding: 0;
+    text-decoration: underline;
+    font-style: italic;
+    font-weight: bold;
+}
+
 .main {
     width: 35%;
     margin: 20px auto;

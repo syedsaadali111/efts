@@ -1,4 +1,5 @@
 .header {
+    margin-top: 4rem;
     background-color: #7b3229;
     text-align: center;
 }
@@ -15,15 +16,26 @@
 }
 
 .main {
-    width: 70%;
+    width: 40%;
     margin: 20px auto;
 }
 
 .row {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     margin-bottom: 10px;
     justify-content: space-around;
+    font-weight: bold;
+}
+
+.row div {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #a1a1a160;
+    padding-bottom: 10px;
+}
+
+.row div span:first-child {
+    color: #585858
 }
 
 .row .label {
@@ -31,39 +43,51 @@
     margin-right: 7px;
 }
 
-.inputContainer {
-    text-align: center;
-}
-
-.inputContainer button{
-    margin-left: 5px;
-}
-
-.inputContainer button {
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #ba1b08;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
-    border: none;
-    font-family: 'Montserrat', sans-serif;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.inputContainer input {
+.main input {
     margin: 10px 0;
     border-radius: 22px;
     border: none;
-    padding: 10px;
+    padding: 15px;
     color: #793027;
     font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s ease;
 }
 
-.inputContainer input:focus-visible {
+.main input:focus{
     outline: none;
+    transform: scale(1.05);
+}
+
+.main button {
+    width: min(100px, 100%);
+    margin-left: 10px;
+    border-radius: 30px;
+    padding: 12px;
+    background-color: #ba1b08;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.main button:hover{
+    cursor: pointer;
+}
+
+.main button:focus{
+    outline: none;
+}
+
+.main button:disabled{
+    cursor: default;
+}
+
+.inputContainer {
+    text-align: center;
+    margin: auto;
+    margin-bottom: 20px;
 }
 
 @media only screen and (max-width: 920px) {
@@ -80,12 +104,10 @@
     
     .row div {
         margin-bottom: 10px;
-        border-bottom: 1px solid black;
     }
 
     .row .label {
         margin-right: 14px;
     }
-
     
 }

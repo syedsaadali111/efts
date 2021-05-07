@@ -29,7 +29,7 @@ const Home = () => {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h1>Your Account</h1>
+                <h1>Account Details</h1>
             </div>
             <div className={styles.main}>
                 <div className={styles.profile}>
@@ -43,7 +43,7 @@ const Home = () => {
                             <td>{user.address}</td>
                         </tr>   
                         <tr>
-                            <td>Type of institute:</td>
+                            <td>Institute type:</td>
                             <td>{user.context.charAt(0).toUpperCase() + user.context.slice(1)}</td>
                         </tr>                     
                         <tr>
