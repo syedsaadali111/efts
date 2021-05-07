@@ -29,8 +29,8 @@ const Home = () => {
                                 <td>{user.username}</td>
                             </tr>
                             <tr>
-                                <td>Admin type:</td>
-                                <td>{user.type}</td>
+                                <td>Account Type:</td>
+                                <td>{user.type === 'other' ? 'Regular' : 'Super-user'}</td>
                             </tr>                                    
                         </tbody>
                     </table>

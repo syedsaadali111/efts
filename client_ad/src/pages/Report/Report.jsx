@@ -128,7 +128,7 @@ const daysPast = (timestamp) => {
     if (daysPast < 1) {
         return 'Less than a day ago';
     }
-    if (daysPast === 1) {
+    if (Math.floor(daysPast) === 1) {
         return Math.floor(daysPast) + ' day ago';
     }
 
